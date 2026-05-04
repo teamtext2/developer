@@ -1,11 +1,11 @@
 <!DOCTYPE html>
-<html lang="vi">
+<html lang="en">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Text2 Developer | Beta Apps</title>
-    <meta name="description" content="Cổng thông tin phát triển Text2 - Trải nghiệm các ứng dụng Beta mới nhất.">
+    <meta name="description" content="Text2 Developer Portal - Experience the latest Beta applications.">
     <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
     <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
     <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
@@ -13,188 +13,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
-    <style>
-        :root {
-            --bg: #000000;
-            --text: #ffffff;
-            --border: #333333;
-            --card-hover: #111111;
-            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            background-color: var(--bg);
-            color: var(--text);
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-            line-height: 1.6;
-            overflow-x: hidden;
-            -webkit-font-smoothing: antialiased;
-        }
-
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 4rem 2rem;
-        }
-
-        /* Header Section */
-        header {
-            margin-bottom: 5rem;
-            text-align: center;
-        }
-
-        .logo {
-            font-size: 0.875rem;
-            font-weight: 800;
-            letter-spacing: 0.2em;
-            text-transform: uppercase;
-            margin-bottom: 1rem;
-            display: inline-block;
-            border: 1px solid var(--text);
-            padding: 0.5rem 1rem;
-        }
-
-        h1 {
-            font-size: clamp(2.5rem, 8vw, 4rem);
-            font-weight: 800;
-            letter-spacing: -0.04em;
-            margin-bottom: 1rem;
-        }
-
-        .subtitle {
-            font-size: 1.125rem;
-            font-weight: 300;
-            color: #888;
-            max-width: 600px;
-            margin: 0 auto;
-        }
-
-        /* App Grid */
-        #app-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-            gap: 2rem;
-            margin-top: 3rem;
-        }
-
-        .app-card {
-            text-decoration: none;
-            color: inherit;
-            border: 1px solid var(--border);
-            padding: 2.5rem;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            transition: var(--transition);
-            position: relative;
-            overflow: hidden;
-            background: transparent;
-        }
-
-        .app-card:hover {
-            border-color: var(--text);
-            background: var(--card-hover);
-            transform: translateY(-5px);
-        }
-
-        .app-icon {
-            width: 80px;
-            height: 80px;
-            margin-bottom: 1.5rem;
-            filter: grayscale(1);
-            transition: var(--transition);
-            border-radius: 20px;
-            object-fit: cover;
-        }
-
-        .app-card:hover .app-icon {
-            filter: grayscale(0);
-            transform: scale(1.1);
-        }
-
-        .app-title {
-            font-size: 1.25rem;
-            font-weight: 600;
-            text-align: center;
-        }
-
-        .badge {
-            position: absolute;
-            top: 1rem;
-            right: 1rem;
-            font-size: 0.65rem;
-            font-weight: 800;
-            text-transform: uppercase;
-            letter-spacing: 0.1em;
-            border: 1px solid var(--border);
-            padding: 0.25rem 0.5rem;
-            color: #666;
-        }
-
-        .app-card:hover .badge {
-            color: var(--text);
-            border-color: var(--text);
-        }
-
-        /* Loading & Empty States */
-        .loading-state,
-        .error-state {
-            grid-column: 1 / -1;
-            text-align: center;
-            padding: 5rem;
-            font-size: 1.25rem;
-            color: #555;
-        }
-
-        /* Footer */
-        footer {
-            margin-top: 10rem;
-            padding: 2rem;
-            text-align: center;
-            font-size: 0.875rem;
-            color: #444;
-            border-top: 1px solid var(--border);
-        }
-
-        /* Animations */
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(20px);
-            }
-
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        .app-card {
-            animation: fadeIn 0.6s ease forwards;
-        }
-
-        /* Responsive Fixes */
-        @media (max-width: 600px) {
-            .container {
-                padding: 2rem 1.5rem;
-            }
-
-            header {
-                margin-bottom: 3rem;
-            }
-
-            .app-card {
-                padding: 1.5rem;
-            }
-        }
-    </style>
+    <link rel="stylesheet" href="data/css/main.css?v=1">
 </head>
 
 <body>
@@ -203,67 +22,18 @@
         <header>
             <div class="logo">TEXT2 DEV</div>
             <h1>Beta Access</h1>
-            <p class="subtitle">Khám phá và thử nghiệm các công nghệ mới nhất từ đội ngũ phát triển Text2.</p>
+            <p class="subtitle">Discover and test the latest technologies from the Text2 development team.</p>
         </header>
 
         <div id="app-grid">
-            <div class="loading-state">Đang tải ứng dụng...</div>
+            <div class="loading-state">Loading applications...</div>
         </div>
 
         <footer>
             &copy; 2026 Text2 Developer. Minimalism by Design.
         </footer>
     </div>
-
-    <script>
-        async function fetchApps() {
-            const grid = document.getElementById('app-grid');
-
-            try {
-                // Thêm timestamp để tránh cache nếu app.json thay đổi
-                const response = await fetch('app.json?t=' + Date.now());
-                if (!response.ok) throw new Error('Không thể tải danh sách ứng dụng');
-
-                const apps = await response.json();
-
-                if (apps.length === 0) {
-                    grid.innerHTML = '<div class="error-state">Hiện không có ứng dụng beta nào.</div>';
-                    return;
-                }
-
-                grid.innerHTML = ''; // Xóa loading state
-
-                apps.forEach((app, index) => {
-                    const card = document.createElement('a');
-                    card.href = app.l;
-                    card.className = 'app-card';
-                    card.target = '_blank';
-                    card.style.animationDelay = `${index * 0.1}s`;
-
-                    // Handle missing icons
-                    const iconUrl = app.i || 'https://via.placeholder.com/80?text=App';
-
-                    card.innerHTML = `
-                        <span class="badge">BETA</span>
-                        <img src="${iconUrl}" alt="${app.t}" class="app-icon" onerror="this.src='https://via.placeholder.com/80?text=Icon'">
-                        <div class="app-title">${app.t}</div>
-                    `;
-
-                    grid.appendChild(card);
-                });
-
-            } catch (error) {
-                console.error('Error:', error);
-                grid.innerHTML = '<div class="error-state">Có lỗi xảy ra khi tải dữ liệu. Vui lòng thử lại sau.</div>';
-            }
-        }
-
-        // Khởi tạo
-        document.addEventListener('DOMContentLoaded', fetchApps);
-
-        // Tự động làm mới mỗi 30 giây để cập nhật app mới từ app.json
-        setInterval(fetchApps, 30000);
-    </script>
+    <script src="data/js/main.js?v=1"></script>
 </body>
 
 </html>
