@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Camera</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #ffffff;
+      --border: #d0d0d0;
+      --text: #1a1a1a;
+      --accent: #7b9ec8;
+    }
+    html, body {
+      height: 100%; width: 100%;
+      background: var(--bg);
+      font-family: 'Inter', sans-serif;
+      overflow: hidden;
+    }
+
+    .cam-page {
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      padding: 20px 20px 20px;
+    }
+
+    /* Viewfinder */
+    .viewfinder-wrap {
+      flex: 1;
+      position: relative;
+      border-radius: 28px;
+      overflow: hidden;
+      border: 1.5px solid var(--border);
+      background: #f8f8f8;
+      box-shadow: inset 0 2px 12px rgba(0,0,0,0.04);
+    }
+    #cam-video {
+      width: 100%; height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+    .cam-placeholder {
+      position: absolute; inset: 0;
+      display: flex; align-items: center; justify-content: center;
+      flex-direction: column; gap: 12px;
+      color: #ccc;
+    }
+    .cam-placeholder svg { opacity: 0.35; }
+    .cam-placeholder p { font-size: 13px; color: #bbb; }
+
+    /* Flash overlay */
+    .flash-overlay {
+      position: absolute; inset: 0;
+      background: white;
+      opacity: 0;
+      pointer-events: none;
+      border-radius: 26px;
+      transition: opacity 0s;
+    }
+    .flash-overlay.flash {
+      animation: doFlash 0.4s ease;
+    }
+    @keyframes doFlash {
+      0%   { opacity: 0; }
+      20%  { opacity: 0.85; }
+      100% { opacity: 0; }
+    }
+
+    /* Controls */
+    .cam-controls {
+      padding: 24px 0 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 36px;
+    }
+
+    /* Gallery thumb */
+    .btn-gallery {
+      width: 52px; height: 52px;
+      border-radius: 14px;
+      border: 1.5px solid var(--border);
+      background: var(--bg);
+      cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      overflow: hidden;
+      transition: transform 0.18s, box-shadow 0.18s;
+    }
+    .btn-gallery:hover { transform: scale(1.08); box-shadow: 0 4px 16px rgba(0,0,0,0.1); }
+    .btn-gallery img { width: 100%; height: 100%; object-fit: cover; border-radius: 12px; }
+
+    /* Shutter */
+    .btn-shutter {
+      width: 72px; height: 72px;
+      border-radius: 50%;
+      border: 2.5px solid var(--border);
+      background: var(--bg);
+      cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      transition: transform 0.15s, box-shadow 0.15s;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+      position: relative;
+    }
+    .btn-shutter:active { transform: scale(0.93); }
+    .btn-shutter:hover { box-shadow: 0 4px 18px rgba(0,0,0,0.14); }
+    .shutter-inner {
+      width: 58px; height: 58px;
+      border-radius: 50%;
+      background: #1a1a1a;
+      opacity: 0.08;
+    }
+
+    /* Flip */
+    .btn-flip {
+      width: 52px; height: 52px;
+      border-radius: 50%;
+      border: 1.5px solid var(--border);
+      background: var(--bg);
+      cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      transition: transform 0.18s;
+    }
+    .btn-flip:hover { background: #f0f0f0; }
+    .btn-flip:active { transform: rotate(180deg); }
+
+    /* Preview toast */
+    .preview-toast {
+      position: fixed;
+      bottom: 120px; left: 50%; transform: translateX(-50%);
+      background: rgba(0,0,0,0.78);
+      color: #fff;
+      padding: 10px 20px;
+      border-radius: 24px;
+      font-size: 13px;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s;
+      white-space: nowrap;
+      z-index: 99;
+    }
+    .preview-toast.show { opacity: 1; }
+  </style>
+</head>
+<body>
+  <div class="cam-page">
+    <div class="viewfinder-wrap" id="viewfinder">
+      <video id="cam-video" autoplay muted playsinline></video>
+      <div class="cam-placeholder" id="cam-placeholder">
+        <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="#aaa" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/>
+          <circle cx="12" cy="13" r="4"/>
+        </svg>
+        <p>Nhấn shutter để mở camera</p>
+      </div>
+      <div class="flash-overlay" id="flash"></div>
+    </div>
+
+    <div class="cam-controls">
+      <button class="btn-gallery" id="btn-gallery" title="Thư viện ảnh">
+        <!-- Default icon -->
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#888" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="3" y="3" width="18" height="18" rx="4" ry="4"/>
+          <circle cx="8.5" cy="8.5" r="1.5"/>
+          <polyline points="21 15 16 10 5 21"/>
+        </svg>
+      </button>
+
+      <button class="btn-shutter" id="btn-shutter" title="Chụp ảnh">
+        <div class="shutter-inner"></div>
+      </button>
+
+      <button class="btn-flip" id="btn-flip" title="Lật camera">
+        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#555" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="17 1 21 5 17 9"/>
+          <path d="M3 11V9a4 4 0 0 1 4-4h14"/>
+          <polyline points="7 23 3 19 7 15"/>
+          <path d="M21 13v2a4 4 0 0 1-4 4H3"/>
+        </svg>
+      </button>
+    </div>
+  </div>
+
+  <div class="preview-toast" id="toast">📷 Ảnh đã lưu vào IndexedDB</div>
+
+  <canvas id="snap-canvas" style="display:none"></canvas>
+
+  <script>
+    // ===== IndexedDB Setup =====
+    const DB_NAME = 'text2_photos';
+    const STORE = 'photos';
+    let db;
+
+    function openDB() {
+      return new Promise((res, rej) => {
+        const req = indexedDB.open(DB_NAME, 1);
+        req.onupgradeneeded = e => {
+          const d = e.target.result;
+          if (!d.objectStoreNames.contains(STORE)) {
+            d.createObjectStore(STORE, { keyPath: 'id', autoIncrement: true });
+          }
+        };
+        req.onsuccess = e => { db = e.target.result; res(db); };
+        req.onerror = rej;
+      });
+    }
+
+    function savePhoto(dataUrl) {
+      return new Promise((res, rej) => {
+        const tx = db.transaction(STORE, 'readwrite');
+        const store = tx.objectStore(STORE);
+        store.add({ dataUrl, timestamp: Date.now() });
+        tx.oncomplete = res;
+        tx.onerror = rej;
+      });
+    }
+
+    // ===== Camera =====
+    let stream = null;
+    let facingMode = 'environment';
+    const video = document.getElementById('cam-video');
+    const placeholder = document.getElementById('cam-placeholder');
+    const canvas = document.getElementById('snap-canvas');
+    const flashEl = document.getElementById('flash');
+    const toast = document.getElementById('toast');
+    const galleryBtn = document.getElementById('btn-gallery');
+
+    async function startCamera() {
+      try {
+        if (stream) stream.getTracks().forEach(t => t.stop());
+        stream = await navigator.mediaDevices.getUserMedia({
+          video: { facingMode, width: { ideal: 1280 }, height: { ideal: 720 } },
+          audio: false
+        });
+        video.srcObject = stream;
+        placeholder.style.display = 'none';
+      } catch(e) {
+        placeholder.style.display = 'flex';
+        console.warn('Camera không khả dụng:', e);
+      }
+    }
+
+    function showToast(msg) {
+      toast.textContent = msg;
+      toast.classList.add('show');
+      setTimeout(() => toast.classList.remove('show'), 2200);
+    }
+
+    document.getElementById('btn-shutter').addEventListener('click', async () => {
+      if (!stream) { await startCamera(); return; }
+      // Flash effect
+      flashEl.classList.remove('flash');
+      void flashEl.offsetWidth;
+      flashEl.classList.add('flash');
+
+      // Capture frame
+      canvas.width = video.videoWidth || 1280;
+      canvas.height = video.videoHeight || 720;
+      const ctx = canvas.getContext('2d');
+      if (facingMode === 'user') {
+        ctx.translate(canvas.width, 0);
+        ctx.scale(-1, 1);
+      }
+      ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+      const dataUrl = canvas.toDataURL('image/jpeg', 0.88);
+
+      // Update gallery thumb
+      galleryBtn.innerHTML = `<img src="${dataUrl}" alt="Last photo" />`;
+
+      // Save to IndexedDB
+      try {
+        await savePhoto(dataUrl);
+        showToast('📷 Ảnh đã lưu!');
+      } catch(e) {
+        showToast('⚠️ Lỗi lưu ảnh');
+      }
+    });
+
+    document.getElementById('btn-flip').addEventListener('click', () => {
+      facingMode = facingMode === 'environment' ? 'user' : 'environment';
+      startCamera();
+    });
+
+    document.getElementById('btn-gallery').addEventListener('click', () => {
+      // Tell parent to navigate to image page
+      if (window.parent && window.parent !== window) {
+        window.parent.navigate('image');
+      }
+    });
+
+    // Init
+    openDB().then(() => startCamera());
+  </script>
+</body>
+</html>

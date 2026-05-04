@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Newsfeed</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #ffffff;
+      --border: #e0e0e0;
+      --text: #1a1a1a;
+      --muted: #888;
+      --accent: #7b9ec8;
+      --card-bg: #7b9ec8;
+      --note-bg: #a9bfda;
+    }
+    html, body {
+      height: 100%; background: var(--bg);
+      font-family: 'Inter', sans-serif;
+      overflow-y: auto; overflow-x: hidden;
+      scroll-behavior: smooth;
+    }
+
+    /* Feed container */
+    .feed {
+      padding: 16px 16px 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 28px;
+    }
+
+    /* Each feed item */
+    .feed-item {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      animation: fadeUp 0.4s ease both;
+    }
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(18px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Image card */
+    .feed-image {
+      width: 100%;
+      aspect-ratio: 4/3;
+      border-radius: 24px;
+      background: var(--card-bg);
+      overflow: hidden;
+      position: relative;
+      cursor: pointer;
+      transition: transform 0.2s;
+    }
+    .feed-image:hover { transform: scale(1.01); }
+    .feed-image img { width: 100%; height: 100%; object-fit: cover; display: block; }
+    .feed-image .img-label {
+      position: absolute; inset: 0;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 16px; font-weight: 700; color: #1a1a1a;
+      text-align: center; padding: 16px;
+    }
+
+    /* Note/caption bar */
+    .feed-note {
+      background: var(--note-bg);
+      border-radius: 14px;
+      padding: 14px 18px;
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .feed-note span { flex: 1; }
+    .feed-actions {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+    }
+    .action-btn {
+      background: none; border: none; cursor: pointer;
+      padding: 4px; border-radius: 50%;
+      transition: transform 0.18s;
+      display: flex; align-items: center;
+    }
+    .action-btn:hover { transform: scale(1.2); }
+    .action-btn.liked svg path { fill: #e05555; stroke: #e05555; }
+
+    /* User row */
+    .feed-user {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 0 4px;
+    }
+    .user-avatar {
+      width: 34px; height: 34px;
+      border-radius: 50%;
+      background: var(--accent);
+      overflow: hidden;
+      flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 14px; font-weight: 700; color: #fff;
+    }
+    .user-info { flex: 1; }
+    .user-name { font-size: 13px; font-weight: 600; }
+    .user-time { font-size: 11px; color: var(--muted); }
+
+    /* Like count */
+    .like-count { font-size: 12px; color: var(--muted); padding-left: 4px; }
+
+    /* Pull-to-refresh indicator */
+    .refresh-indicator {
+      text-align: center;
+      padding: 16px;
+      color: #bbb;
+      font-size: 13px;
+    }
+    .refresh-indicator.loading { color: var(--accent); }
+
+    /* Lightbox */
+    .lightbox {
+      position: fixed; inset: 0;
+      background: rgba(0,0,0,0.9); z-index: 200;
+      display: flex; align-items: center; justify-content: center;
+      opacity: 0; pointer-events: none;
+      transition: opacity 0.25s;
+    }
+    .lightbox.open { opacity: 1; pointer-events: all; }
+    .lightbox img { max-width: 95%; max-height: 90vh; border-radius: 16px; }
+    .lb-close {
+      position: absolute; top: 20px; right: 20px;
+      background: rgba(255,255,255,0.15); border: none;
+      border-radius: 50%; width: 40px; height: 40px;
+      color: #fff; font-size: 20px; cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="refresh-indicator" id="refresh-bar">↓ Kéo xuống để tải thêm</div>
+
+  <div class="feed" id="feed-container"></div>
+
+  <!-- Lightbox -->
+  <div class="lightbox" id="lightbox">
+    <button class="lb-close" id="lb-close">✕</button>
+    <img id="lb-img" src="" alt="Preview" />
+  </div>
+
+  <script>
+    // ===== Mock data =====
+    const MOCK_USERS = [
+      { name: 'Alex Nguyen', initial: 'A', time: '2 phút trước' },
+      { name: 'Maria Le',    initial: 'M', time: '15 phút trước' },
+      { name: 'David Tran',  initial: 'D', time: '1 giờ trước' },
+      { name: 'Sophie Pham', initial: 'S', time: '3 giờ trước' },
+      { name: 'Kevin Ho',    initial: 'K', time: 'Hôm qua' },
+    ];
+    const MOCK_NOTES = [
+      'title of image user  task note',
+      'Một buổi chiều đẹp tuyệt vời 🌅',
+      'Khoảnh khắc đáng nhớ với bạn bè ❤️',
+      'Photo of the day – feeling great!',
+      'Sharing my world with you 📸',
+    ];
+    const ACCENT_SHADES = ['#7b9ec8','#8fb2d4','#6a8fb8','#9ab6d8','#5f84ae'];
+
+    let feedItems = [];
+    let page = 0;
+    const PER_PAGE = 3;
+
+    // ===== IndexedDB =====
+    const DB_NAME = 'text2_photos';
+    const STORE = 'photos';
+    let db;
+
+    function openDB() {
+      return new Promise((res, rej) => {
+        const req = indexedDB.open(DB_NAME, 1);
+        req.onupgradeneeded = e => {
+          const d = e.target.result;
+          if (!d.objectStoreNames.contains(STORE)) d.createObjectStore(STORE, { keyPath: 'id', autoIncrement: true });
+        };
+        req.onsuccess = e => { db = e.target.result; res(db); };
+        req.onerror = rej;
+      });
+    }
+    function getAllPhotos() {
+      return new Promise(res => {
+        db.transaction(STORE,'readonly').objectStore(STORE).getAll().onsuccess = e => res(e.target.result.reverse());
+      });
+    }
+
+    // ===== Render =====
+    function buildFeedItem(data, idx) {
+      const user = MOCK_USERS[idx % MOCK_USERS.length];
+      const note = MOCK_NOTES[idx % MOCK_NOTES.length];
+      const shade = ACCENT_SHADES[idx % ACCENT_SHADES.length];
+      const itemId = `item-${idx}`;
+
+      const el = document.createElement('div');
+      el.className = 'feed-item';
+      el.style.animationDelay = `${idx * 0.07}s`;
+
+      const imgContent = data.isReal
+        ? `<img src="${data.dataUrl}" alt="Photo" />`
+        : `<div class="img-label">Image of user end friend</div>`;
+
+      el.innerHTML = `
+        <div class="feed-user">
+          <div class="user-avatar" style="background:${shade}">${user.initial}</div>
+          <div class="user-info">
+            <div class="user-name">${user.name}</div>
+            <div class="user-time">${user.time}</div>
+          </div>
+        </div>
+        <div class="feed-image" style="background:${shade}" id="img-${itemId}">
+          ${imgContent}
+        </div>
+        <div class="feed-note">
+          <span>${note}</span>
+          <div class="feed-actions">
+            <button class="action-btn" id="like-${itemId}" title="Like">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#888" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+              </svg>
+            </button>
+            <button class="action-btn" title="Comment">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#888" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+              </svg>
+            </button>
+            <button class="action-btn" title="Share">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#888" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/>
+                <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/>
+                <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/>
+              </svg>
+            </button>
+          </div>
+        </div>
+      `;
+
+      // Like toggle
+      const likeBtn = el.querySelector(`#like-${itemId}`);
+      likeBtn.addEventListener('click', () => likeBtn.classList.toggle('liked'));
+
+      // Lightbox for real photos
+      if (data.isReal) {
+        el.querySelector(`#img-${itemId}`).addEventListener('click', () => openLightbox(data.dataUrl));
+      }
+
+      return el;
+    }
+
+    async function loadFeed(append = false) {
+      const container = document.getElementById('feed-container');
+      if (!append) { container.innerHTML = ''; page = 0; }
+
+      const realPhotos = await getAllPhotos();
+
+      // Mix real photos with mock items
+      const batch = [];
+      for (let i = 0; i < PER_PAGE; i++) {
+        const globalIdx = page * PER_PAGE + i;
+        const realIdx = globalIdx < realPhotos.length ? globalIdx : -1;
+        batch.push({
+          isReal: realIdx >= 0,
+          dataUrl: realIdx >= 0 ? realPhotos[realIdx].dataUrl : null
+        });
+      }
+
+      batch.forEach((data, i) => {
+        const idx = page * PER_PAGE + i;
+        container.appendChild(buildFeedItem(data, idx));
+      });
+      page++;
+    }
+
+    // Infinite scroll
+    let loading = false;
+    window.addEventListener('scroll', async () => {
+      if (loading) return;
+      const scrollBottom = window.innerHeight + window.scrollY;
+      const docHeight = document.documentElement.scrollHeight;
+      if (scrollBottom >= docHeight - 80) {
+        loading = true;
+        const bar = document.getElementById('refresh-bar');
+        bar.textContent = '⏳ Đang tải...'; bar.classList.add('loading');
+        await new Promise(r => setTimeout(r, 700));
+        await loadFeed(true);
+        bar.textContent = '↓ Kéo xuống để tải thêm'; bar.classList.remove('loading');
+        loading = false;
+      }
+    });
+
+    // Lightbox
+    const lightbox = document.getElementById('lightbox');
+    const lbImg = document.getElementById('lb-img');
+    document.getElementById('lb-close').addEventListener('click', () => lightbox.classList.remove('open'));
+    lightbox.addEventListener('click', e => { if (e.target === lightbox) lightbox.classList.remove('open'); });
+    function openLightbox(src) { lbImg.src = src; lightbox.classList.add('open'); }
+
+    // Init
+    openDB().then(() => loadFeed());
+  </script>
+</body>
+</html>

@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>My Images</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #ffffff;
+      --border: #e0e0e0;
+      --text: #1a1a1a;
+      --accent: #7b9ec8;
+      --accent-soft: #a9bfda;
+      --card-bg: #7b9ec8;
+    }
+    html, body {
+      height: 100%; background: var(--bg);
+      font-family: 'Inter', sans-serif;
+      overflow-y: auto; overflow-x: hidden;
+    }
+
+    .image-page {
+      padding: 20px 16px;
+    }
+
+    /* Section title */
+    .section-title {
+      font-size: 13px;
+      font-weight: 600;
+      color: #888;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      margin-bottom: 16px;
+    }
+
+    /* My photos grid */
+    .my-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      margin-bottom: 32px;
+    }
+    .my-card {
+      aspect-ratio: 1;
+      border-radius: 20px;
+      overflow: hidden;
+      background: var(--card-bg);
+      cursor: pointer;
+      position: relative;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .my-card:hover { transform: scale(1.04); box-shadow: 0 6px 20px rgba(123,158,200,0.3); }
+    .my-card img {
+      width: 100%; height: 100%; object-fit: cover; display: block;
+    }
+    .my-card .card-label {
+      position: absolute; inset: 0;
+      display: flex; align-items: center; justify-content: center;
+      text-align: center;
+      font-size: 12px;
+      font-weight: 600;
+      color: #1a1a1a;
+      padding: 8px;
+    }
+    .my-card .delete-btn {
+      position: absolute;
+      top: 6px; right: 6px;
+      width: 24px; height: 24px;
+      border-radius: 50%;
+      background: rgba(0,0,0,0.45);
+      border: none; cursor: pointer;
+      display: none;
+      align-items: center; justify-content: center;
+      color: #fff; font-size: 14px;
+      transition: background 0.18s;
+    }
+    .my-card:hover .delete-btn { display: flex; }
+    .my-card .delete-btn:hover { background: rgba(200,60,60,0.85); }
+
+    /* Friends section */
+    .friends-title {
+      font-size: 13px;
+      font-weight: 600;
+      color: #888;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      margin-bottom: 16px;
+    }
+    .friends-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+    }
+    .friend-card {
+      aspect-ratio: 1;
+      border-radius: 20px;
+      background: var(--accent);
+      overflow: hidden;
+      position: relative;
+      cursor: pointer;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .friend-card:hover { transform: scale(1.04); box-shadow: 0 6px 20px rgba(123,158,200,0.3); }
+    .friend-card img { width: 100%; height: 100%; object-fit: cover; }
+    .friend-card .card-label {
+      position: absolute; inset: 0;
+      display: flex; align-items: center; justify-content: center;
+      text-align: center;
+      font-size: 12px;
+      font-weight: 600;
+      color: #1a1a1a;
+      padding: 8px;
+    }
+
+    /* Empty state */
+    .empty-state {
+      text-align: center;
+      padding: 40px 20px;
+      color: #bbb;
+    }
+    .empty-state svg { margin-bottom: 12px; opacity: 0.4; }
+    .empty-state p { font-size: 14px; }
+
+    /* Upload fab */
+    .fab {
+      position: fixed;
+      bottom: 20px; right: 20px;
+      width: 52px; height: 52px;
+      background: var(--text);
+      border: none; border-radius: 50%;
+      cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.2);
+      transition: transform 0.18s, box-shadow 0.18s;
+      z-index: 50;
+    }
+    .fab:hover { transform: scale(1.1); box-shadow: 0 6px 24px rgba(0,0,0,0.3); }
+    .fab:active { transform: scale(0.95); }
+    input#file-upload { display: none; }
+
+    /* Toast */
+    .toast {
+      position: fixed;
+      bottom: 90px; left: 50%; transform: translateX(-50%);
+      background: rgba(0,0,0,0.78);
+      color: #fff; padding: 10px 20px;
+      border-radius: 24px; font-size: 13px;
+      opacity: 0; pointer-events: none;
+      transition: opacity 0.3s; white-space: nowrap; z-index: 99;
+    }
+    .toast.show { opacity: 1; }
+
+    /* Lightbox */
+    .lightbox {
+      position: fixed; inset: 0;
+      background: rgba(0,0,0,0.9);
+      z-index: 200;
+      display: flex; align-items: center; justify-content: center;
+      opacity: 0; pointer-events: none;
+      transition: opacity 0.25s;
+    }
+    .lightbox.open { opacity: 1; pointer-events: all; }
+    .lightbox img { max-width: 95%; max-height: 90vh; border-radius: 16px; }
+    .lightbox-close {
+      position: absolute; top: 20px; right: 20px;
+      background: rgba(255,255,255,0.15); border: none;
+      border-radius: 50%; width: 40px; height: 40px;
+      color: #fff; font-size: 20px; cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <div class="image-page">
+    <div class="section-title">My Photos</div>
+    <div class="my-grid" id="my-grid">
+      <!-- loaded from IndexedDB -->
+    </div>
+
+    <div class="friends-title">Friends</div>
+    <div class="friends-grid" id="friends-grid">
+      <!-- mock friend cards -->
+      <div class="friend-card"><span class="card-label">Image of user end friend</span></div>
+      <div class="friend-card"><span class="card-label">Image of user end friend</span></div>
+      <div class="friend-card"><span class="card-label">Image of user end friend</span></div>
+      <div class="friend-card"><span class="card-label">Image of user end friend</span></div>
+      <div class="friend-card"><span class="card-label">Image of user end friend</span></div>
+      <div class="friend-card"><span class="card-label">Image of user end friend</span></div>
+    </div>
+  </div>
+
+  <!-- Upload FAB -->
+  <button class="fab" id="fab-upload" title="Tải ảnh lên">
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+      <line x1="12" y1="5" x2="12" y2="19"/>
+      <line x1="5" y1="12" x2="19" y2="12"/>
+    </svg>
+  </button>
+  <input type="file" id="file-upload" accept="image/*" multiple />
+
+  <div class="toast" id="toast"></div>
+
+  <!-- Lightbox -->
+  <div class="lightbox" id="lightbox">
+    <button class="lightbox-close" id="lb-close">✕</button>
+    <img id="lb-img" src="" alt="Preview" />
+  </div>
+
+  <script>
+    const DB_NAME = 'text2_photos';
+    const STORE = 'photos';
+    let db;
+
+    function openDB() {
+      return new Promise((res, rej) => {
+        const req = indexedDB.open(DB_NAME, 1);
+        req.onupgradeneeded = e => {
+          const d = e.target.result;
+          if (!d.objectStoreNames.contains(STORE)) {
+            d.createObjectStore(STORE, { keyPath: 'id', autoIncrement: true });
+          }
+        };
+        req.onsuccess = e => { db = e.target.result; res(db); };
+        req.onerror = rej;
+      });
+    }
+
+    function getAllPhotos() {
+      return new Promise((res, rej) => {
+        const tx = db.transaction(STORE, 'readonly');
+        tx.objectStore(STORE).getAll().onsuccess = e => res(e.target.result);
+      });
+    }
+
+    function deletePhoto(id) {
+      return new Promise((res) => {
+        const tx = db.transaction(STORE, 'readwrite');
+        tx.objectStore(STORE).delete(id);
+        tx.oncomplete = res;
+      });
+    }
+
+    function addPhoto(dataUrl) {
+      return new Promise((res) => {
+        const tx = db.transaction(STORE, 'readwrite');
+        tx.objectStore(STORE).add({ dataUrl, timestamp: Date.now() });
+        tx.oncomplete = res;
+      });
+    }
+
+    function showToast(msg) {
+      const t = document.getElementById('toast');
+      t.textContent = msg;
+      t.classList.add('show');
+      setTimeout(() => t.classList.remove('show'), 2200);
+    }
+
+    // Lightbox
+    const lightbox = document.getElementById('lightbox');
+    const lbImg = document.getElementById('lb-img');
+    document.getElementById('lb-close').addEventListener('click', () => lightbox.classList.remove('open'));
+    lightbox.addEventListener('click', e => { if (e.target === lightbox) lightbox.classList.remove('open'); });
+
+    function openLightbox(src) { lbImg.src = src; lightbox.classList.add('open'); }
+
+    async function renderMyPhotos() {
+      const photos = await getAllPhotos();
+      const grid = document.getElementById('my-grid');
+      grid.innerHTML = '';
+      if (photos.length === 0) {
+        grid.innerHTML = `<div class="empty-state" style="grid-column:1/-1">
+          <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#ccc" stroke-width="1.4"><rect x="3" y="3" width="18" height="18" rx="4"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+          <p>Chưa có ảnh nào</p></div>`;
+        return;
+      }
+      photos.reverse().forEach(photo => {
+        const card = document.createElement('div');
+        card.className = 'my-card';
+        card.innerHTML = `<img src="${photo.dataUrl}" alt="Photo" /><button class="delete-btn" data-id="${photo.id}">✕</button>`;
+        card.querySelector('img').addEventListener('click', () => openLightbox(photo.dataUrl));
+        card.querySelector('.delete-btn').addEventListener('click', async (e) => {
+          e.stopPropagation();
+          await deletePhoto(photo.id);
+          showToast('🗑️ Đã xóa ảnh');
+          renderMyPhotos();
+        });
+        grid.appendChild(card);
+      });
+    }
+
+    // File upload
+    document.getElementById('fab-upload').addEventListener('click', () => {
+      document.getElementById('file-upload').click();
+    });
+    document.getElementById('file-upload').addEventListener('change', async (e) => {
+      const files = Array.from(e.target.files);
+      for (const file of files) {
+        const dataUrl = await new Promise(res => {
+          const r = new FileReader(); r.onload = ev => res(ev.target.result); r.readAsDataURL(file);
+        });
+        await addPhoto(dataUrl);
+      }
+      showToast(`✅ Đã tải ${files.length} ảnh`);
+      renderMyPhotos();
+      e.target.value = '';
+    });
+
+    // Init
+    openDB().then(renderMyPhotos);
+
+    // Friend cards click → newfest
+    document.querySelectorAll('.friend-card').forEach(c => {
+      c.addEventListener('click', () => {
+        if (window.parent !== window) window.parent.navigate('newfest');
+      });
+    });
+  </script>
+</body>
+</html>
