@@ -1,0 +1,333 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <!-- SEO Optimization -->
+    <title>Text2 - Chat AI beta 1</title>
+    <meta name="description" content="Experience Text2 Chat AI Beta 1 - The smoothest, smartest, and most optimized AI Chat tool available. User-experience focused interface.">
+    <meta name="keywords" content="Text2, Chat AI beta 1, AI Chat, Text2 Chat, Artificial Intelligence">
+    <meta name="author" content="Text2 Team">
+    <link rel="canonical" href="https://text2.co/beta/chat-ai-beta1/">
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://text2.co/beta/chat-ai-beta1/">
+    <meta property="og:title" content="Text2 - Chat AI beta 1">
+    <meta property="og:description" content="Super smooth AI Chat interface, optimized for user experience.">
+    <meta property="og:image" content="https://text2.co/media/thumnel.png">
+
+    <!-- Schema.org JSON-LD -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebApplication",
+      "name": "Text2 - Chat AI beta 1",
+      "url": "https://text2.co/beta/chat-ai-beta1/",
+      "description": "Experience Text2 Chat AI Beta 1 with optimized interface and fast response speed.",
+      "applicationCategory": "ArtificialIntelligenceApplication",
+      "operatingSystem": "All",
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "USD"
+      }
+    }
+    </script>
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <!-- Font & Custom Styles -->
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap');
+
+        body {
+            background-color: #121212;
+            color: #ffffff;
+            font-family: 'Inter', sans-serif;
+            overflow: hidden;
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #333; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: #555; }
+
+        /* Animations */
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .message-enter { animation: slideIn 0.3s cubic-bezier(0.25, 1, 0.5, 1) forwards; }
+
+        .typing-dot { animation: typing 1.4s infinite ease-in-out both; }
+        .typing-dot:nth-child(1) { animation-delay: -0.32s; }
+        .typing-dot:nth-child(2) { animation-delay: -0.16s; }
+        @keyframes typing { 0%, 80%, 100% { transform: scale(0); } 40% { transform: scale(1); } }
+
+        /* Glassmorphism */
+        .glass-header {
+            background: rgba(18, 18, 18, 0.8);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .sidebar-transition { transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+        
+        .chat-gradient {
+            background: linear-gradient(135deg, #2a2a2a 0%, #1f1f1f 100%);
+        }
+        
+        .user-gradient {
+            background: linear-gradient(135deg, #ffffff 0%, #e0e0e0 100%);
+            color: #121212;
+        }
+    </style>
+</head>
+<body class="h-screen flex text-sm md:text-base">
+
+    <!-- Mobile Overlay -->
+    <div id="sidebar-overlay" class="fixed inset-0 bg-black/50 z-20 hidden lg:hidden glass-header" onclick="toggleSidebar()"></div>
+
+    <!-- Sidebar -->
+    <aside id="sidebar" class="sidebar-transition fixed lg:relative z-30 w-[280px] h-full bg-[#000000] border-r border-[#222] flex flex-col transform -translate-x-full lg:translate-x-0">
+        <div class="p-4">
+            <button onclick="window.location.reload()" class="w-full flex items-center gap-3 px-4 py-3 bg-[#1E1E1E] hover:bg-[#2A2A2A] text-white rounded-xl transition-all duration-200 border border-[#333] hover:border-[#555] group">
+                <i data-lucide="plus" class="w-5 h-5 text-gray-400 group-hover:text-white transition-colors"></i>
+                <span class="font-medium">New Chat</span>
+            </button>
+        </div>
+
+        <div class="flex-1 overflow-y-auto px-3 space-y-1">
+            <div class="px-3 py-2 text-xs font-semibold text-gray-500 uppercase tracking-wider mt-2">Today</div>
+            <button class="w-full flex items-center gap-3 px-3 py-3 text-gray-300 hover:bg-[#1E1E1E] hover:text-white rounded-lg transition-colors text-left group">
+                <i data-lucide="message-square" class="w-4 h-4 text-gray-500 group-hover:text-white"></i>
+                <span class="truncate">Football Prediction</span>
+            </button>
+        </div>
+    </aside>
+
+    <!-- Main Chat Area -->
+    <main class="flex-1 flex flex-col relative w-full bg-[#121212]">
+        
+        <!-- Header -->
+        <header class="h-16 flex items-center justify-between px-4 lg:px-6 glass-header absolute top-0 w-full z-10">
+            <div class="flex items-center gap-3">
+                <button onclick="toggleSidebar()" class="lg:hidden p-2 text-gray-400 hover:text-white transition-colors">
+                    <i data-lucide="menu" class="w-6 h-6"></i>
+                </button>
+                
+                <div class="flex items-center gap-2 select-none cursor-pointer">
+                    <span class="text-xl font-bold tracking-tight text-white">Text2</span>
+                    <div class="w-6 h-6 relative overflow-hidden rounded-full border border-gray-700 bg-white/10 flex items-center justify-center">
+                         <img src="https://text2.co/favicon.ico" alt="Logo" class="w-6 h-6 object-contain" onerror="this.src='https://via.placeholder.com/16/ffffff/000000?text=T2'">
+                    </div>
+                    <span class="hidden sm:inline-block px-2 py-0.5 rounded-full bg-[#222] text-[10px] text-gray-400 font-mono border border-[#333]">Beta 1</span>
+                </div>
+            </div>
+
+            <div class="flex items-center gap-3">
+                <button class="p-2 text-gray-400 hover:text-white hover:bg-white/5 rounded-lg transition-all">
+                    <i data-lucide="share-2" class="w-5 h-5"></i>
+                </button>
+            </div>
+        </header>
+
+        <!-- Chat Container -->
+        <div id="chat-container" class="flex-1 overflow-y-auto pt-20 pb-40 px-4 md:px-0">
+            <div class="max-w-3xl mx-auto space-y-6">
+                
+                <!-- Welcome Area -->
+                <div id="welcome-screen" class="flex flex-col items-center justify-center min-h-[50vh] text-center space-y-6 message-enter">
+                    <h1 class="text-3xl font-semibold text-white">How can I help you today?</h1>
+                </div>
+
+                <!-- Messages List (Target for API) -->
+                <div id="messages-list" class="space-y-6 pb-4"></div>
+
+                <!-- Typing Indicator (Target for API) -->
+                <div id="typing-indicator" class="hidden flex gap-4 w-full message-enter">
+                    <div class="w-8 h-8 rounded-full bg-[#1E1E1E] border border-[#333] flex items-center justify-center shrink-0">
+                         <img src="https://text2.co/app/chat/favicon.ico" class="w-8 h-8 opacity 100">
+                    </div>
+                    <div class="flex items-center gap-1 bg-[#1E1E1E] px-4 py-3 rounded-2xl rounded-tl-none border border-[#333]">
+                        <div class="w-2 h-2 bg-gray-400 rounded-full typing-dot"></div>
+                        <div class="w-2 h-2 bg-gray-400 rounded-full typing-dot"></div>
+                        <div class="w-2 h-2 bg-gray-400 rounded-full typing-dot"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Input Area (Wrapped in Form for API) -->
+        <div class="absolute bottom-0 left-0 w-full bg-gradient-to-t from-[#121212] via-[#121212] to-transparent pt-10 pb-6 px-4">
+            <div class="max-w-3xl mx-auto">
+                <form id="chat-form" class="relative group">
+                    <div class="absolute -inset-0.5 bg-gradient-to-r from-gray-700 to-gray-600 rounded-2xl opacity-20 group-hover:opacity-40 transition duration-500 blur"></div>
+                    <div class="relative flex items-end gap-2 bg-[#1E1E1E] rounded-2xl border border-[#333] p-2 shadow-xl">
+                        
+                        <button type="button" class="p-2 text-gray-400 hover:text-white transition-colors rounded-lg hover:bg-[#333]">
+                            <i data-lucide="paperclip" class="w-5 h-5"></i>
+                        </button>
+
+                        <textarea 
+                            id="user-input" 
+                            rows="1" 
+                            placeholder="Type a message..." 
+                            class="w-full bg-transparent text-white placeholder-gray-500 text-base p-2 focus:outline-none resize-none max-h-32 overflow-y-auto"
+                            required
+                        ></textarea>
+
+                        <button 
+                            type="submit"
+                            id="send-btn" 
+                            class="p-2 bg-white text-black rounded-xl hover:bg-gray-200 transition-all disabled:opacity-50 disabled:cursor-not-allowed transform active:scale-95"
+                        >
+                            <i data-lucide="arrow-up" class="w-5 h-5"></i>
+                        </button>
+                    </div>
+                </form>
+                <div class="text-center mt-3">
+                    <p class="text-[10px] text-gray-500">Text2 Chat AI Beta 1.</p>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Basic UI Scripts -->
+    <script>
+        lucide.createIcons();
+        const sidebar = document.getElementById('sidebar');
+        const overlay = document.getElementById('sidebar-overlay');
+        const userInput = document.getElementById('user-input');
+
+        function toggleSidebar() {
+            sidebar.classList.toggle('-translate-x-full');
+            overlay.classList.toggle('hidden');
+        }
+
+        // Auto resize and Enter key handling
+        userInput.addEventListener('input', function() {
+            this.style.height = 'auto';
+            this.style.height = (this.scrollHeight) + 'px';
+            if(this.value === '') this.style.height = 'auto';
+        });
+
+        userInput.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                // Trigger form submit via button click to satisfy the module script
+                document.getElementById('send-btn').click();
+            }
+        });
+    </script>
+
+    <!-- API Logic Module -->
+    <script type="module">
+        import { Client } from "https://cdn.jsdelivr.net/npm/@gradio/client/+esm";
+
+        const SPACE_ID = "https://giacmobongda-chat.hf.space"; 
+
+        const form = document.getElementById('chat-form');
+        const input = document.getElementById('user-input'); // Renamed to match
+        const container = document.getElementById('chat-container');
+        const messagesList = document.getElementById('messages-list');
+        const typing = document.getElementById('typing-indicator');
+        const sendBtn = document.getElementById('send-btn');
+        const welcomeScreen = document.getElementById('welcome-screen');
+
+        // Hàm tạo element tin nhắn (Enhanced for UI)
+        function createMessageDiv(isUser) {
+            // Hide welcome screen on first message
+            if (welcomeScreen) welcomeScreen.style.display = 'none';
+
+            const wrapper = document.createElement('div');
+            wrapper.className = `flex gap-4 w-full message-enter ${isUser ? 'justify-end' : ''}`;
+
+            const avatarHtml = isUser ? '' : `
+                <div class="w-8 h-8 rounded-full bg-[#1E1E1E] border border-[#333] flex items-center justify-center shrink-0 mt-1">
+                    <img src="https://text2.co/app/chat/favicon.ico" class="w-8 h-8 opacity 100">
+                </div>
+            `;
+
+            const contentClass = isUser 
+                ? 'user-gradient text-black rounded-2xl rounded-tr-sm px-5 py-3 max-w-[85%] shadow-lg' 
+                : 'chat-gradient text-gray-100 rounded-2xl rounded-tl-none px-5 py-3 border border-[#333] max-w-[85%] leading-relaxed shadow-sm';
+
+            // We create the structure but allow text updates to the <p> tag
+            wrapper.innerHTML = `
+                ${!isUser ? avatarHtml : ''}
+                <div class="${contentClass}">
+                    <p class="whitespace-pre-wrap message-content"></p>
+                </div>
+            `;
+
+            messagesList.appendChild(wrapper);
+            
+            // Auto scroll
+            container.scrollTo({ top: container.scrollHeight, behavior: 'smooth' });
+
+            // Return the wrapper, but we attach a reference to the text container for easy update
+            wrapper.textNode = wrapper.querySelector('.message-content');
+            return wrapper;
+        }
+
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const text = input.value.trim();
+            if (!text) return;
+
+            // 1. Show user message
+            const userDivWrapper = createMessageDiv(true);
+            userDivWrapper.textNode.textContent = text;
+            
+            input.value = '';
+            input.style.height = 'auto'; // Reset height
+            input.disabled = true;
+            sendBtn.disabled = true;
+            typing.classList.remove('hidden'); // Show typing (using class hidden)
+            container.scrollTo({ top: container.scrollHeight, behavior: 'smooth' });
+
+            try {
+                // 2. Connect
+                const client = await Client.connect(SPACE_ID);
+                
+                // 3. Create empty bot bubble first
+                const botDivWrapper = createMessageDiv(false);
+                botDivWrapper.style.display = 'none'; // Hide temporarily
+
+                // 4. Send STREAM request
+                const submission = client.submit("/chat", { message: text });
+                
+                // 5. Listen to stream
+                for await (const msg of submission) {
+                    typing.classList.add('hidden'); // Hide typing
+                    botDivWrapper.style.display = 'flex'; // Show message wrapper
+                    
+                    // Gradio returns accumulated text
+                    botDivWrapper.textNode.textContent = msg.data;
+                    
+                    container.scrollTo({ top: container.scrollHeight, behavior: 'smooth' });
+                }
+
+            } catch (error) {
+                console.error(error);
+                const errWrapper = createMessageDiv(false);
+                errWrapper.textNode.textContent = "Connection error to Space! (Space might be sleeping or overloaded)";
+                typing.classList.add('hidden');
+            } finally {
+                typing.classList.add('hidden');
+                input.disabled = false;
+                sendBtn.disabled = false;
+                input.focus();
+            }
+        });
+    </script>
+</body>
+</html>

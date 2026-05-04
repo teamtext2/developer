@@ -1,0 +1,381 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Text2 - Chat AI Beta 2</title>
+    
+    <!-- SEO & Metadata -->
+    <meta name="description" content="Experience Text2 Chat AI Beta 2 - Smooth AI messaging interface, fast response speed powered by Gemma 3 Mini.">
+    <meta name="keywords" content="Text2 Chat AI beta 2, Text2, Chat AI, Gemma 3 Mini, AI Chatbot, Virtual Assistant">
+    <link rel="canonical" href="https://text2.co/beta/chat-ai-beta2/">
+    
+    <!-- Schema.org JSON-LD -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "SoftwareApplication",
+      "name": "Text2 Chat AI Beta 2",
+      "applicationCategory": "ArtificialIntelligenceApplication",
+      "url": "https://text2.co/beta/chat-ai-beta2/",
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "USD"
+      },
+      "operatingSystem": "All",
+      "description": "Smooth AI messaging interface, fast response speed powered by Gemma 3 Mini."
+    }
+    </script>
+
+    <style>
+        /* --- RESET & VARIABLES --- */
+        :root {
+            --bg-color: #121212;
+            --header-bg: rgba(18, 18, 18, 0.85);
+            --message-user-bg: #ffffff;
+            --message-user-text: #000000;
+            --message-bot-bg: #1E1E1E;
+            --message-bot-text: #E0E0E0;
+            --input-bg: #1E1E1E;
+            --accent-color: #ffffff;
+        }
+
+        * {
+            box-sizing: border-box;
+            outline: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: #ffffff;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji";
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            height: 100vh; /* Fallback */
+            height: 100dvh; /* Dynamic viewport height for mobile */
+            overflow: hidden;
+        }
+
+        /* --- HEADER --- */
+        header {
+            height: 60px;
+            padding: 0 20px;
+            display: flex;
+            align-items: center;
+            background: var(--header-bg);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 100;
+        }
+
+        .brand-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .brand-text {
+            font-size: 20px;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+            color: #ffffff;
+        }
+
+        .brand-icon {
+            width: 24px;
+            height: 24px;
+            border-radius: 4px;
+            object-fit: contain;
+        }
+
+        .badge {
+            font-size: 10px;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 4px 8px;
+            border-radius: 20px;
+            margin-left: 10px;
+            font-weight: 600;
+            color: #aaa;
+            border: 1px solid rgba(255,255,255,0.05);
+        }
+
+        /* --- CHAT CONTAINER --- */
+        #chat-container {
+            flex: 1;
+            margin-top: 60px; /* Header height */
+            overflow-y: auto;
+            padding: 20px;
+            padding-bottom: 100px; /* Space for input */
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            scroll-behavior: smooth;
+        }
+
+        /* Custom Scrollbar */
+        #chat-container::-webkit-scrollbar {
+            width: 6px;
+        }
+        #chat-container::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        #chat-container::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+        }
+
+        /* --- MESSAGES --- */
+        .message {
+            max-width: 85%;
+            padding: 14px 18px;
+            border-radius: 18px;
+            line-height: 1.6;
+            font-size: 15px;
+            position: relative;
+            word-wrap: break-word;
+            animation: slideIn 0.3s cubic-bezier(0.25, 1, 0.5, 1);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .user {
+            align-self: flex-end;
+            background-color: var(--message-user-bg);
+            color: var(--message-user-text);
+            border-bottom-right-radius: 4px;
+        }
+
+        .bot {
+            align-self: flex-start;
+            background-color: var(--message-bot-bg);
+            color: var(--message-bot-text);
+            border-bottom-left-radius: 4px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        /* --- TYPING INDICATOR --- */
+        .typing-container {
+            display: none; /* Hidden by default */
+            align-self: flex-start;
+            background-color: var(--message-bot-bg);
+            padding: 12px 16px;
+            border-radius: 18px;
+            border-bottom-left-radius: 4px;
+            margin-bottom: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .typing-dots {
+            display: flex;
+            gap: 4px;
+        }
+
+        .dot {
+            width: 6px;
+            height: 6px;
+            background: #888;
+            border-radius: 50%;
+            animation: bounce 1.4s infinite ease-in-out both;
+        }
+
+        .dot:nth-child(1) { animation-delay: -0.32s; }
+        .dot:nth-child(2) { animation-delay: -0.16s; }
+
+        @keyframes bounce {
+            0%, 80%, 100% { transform: scale(0); }
+            40% { transform: scale(1); }
+        }
+
+        /* --- INPUT AREA --- */
+        .input-area-wrapper {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: var(--bg-color);
+            padding: 15px 20px 25px 20px; /* Extra padding bottom for iOS safe area */
+            border-top: 1px solid rgba(255, 255, 255, 0.08);
+            z-index: 101;
+        }
+
+        .input-area {
+            display: flex;
+            gap: 12px;
+            align-items: flex-end;
+            background: var(--input-bg);
+            padding: 8px;
+            border-radius: 24px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: border-color 0.2s;
+        }
+
+        .input-area:focus-within {
+            border-color: rgba(255, 255, 255, 0.3);
+        }
+
+        input {
+            flex: 1;
+            background: transparent;
+            border: none;
+            padding: 12px 15px;
+            color: white;
+            font-size: 16px; /* Prevents zoom on iOS */
+            font-family: inherit;
+        }
+
+        input::placeholder {
+            color: #666;
+        }
+
+        button {
+            background: #ffffff;
+            border: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: transform 0.2s, background-color 0.2s;
+            flex-shrink: 0;
+        }
+
+        button:active {
+            transform: scale(0.92);
+        }
+
+        button svg {
+            width: 20px;
+            height: 20px;
+            fill: #121212;
+            transform: translateX(2px); /* Visual correction for send icon */
+        }
+
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="brand-wrapper">
+            <!-- Đổi vị trí: Logo bên trái cùng, rồi đến Text -->
+            <img src="https://text2.co/favicon.ico" alt="Text2 Icon" class="brand-icon" onerror="this.style.display='none'">
+            <span class="brand-text">Text2</span>
+            <span class="badge">BETA 2</span>
+        </div>
+    </header>
+
+    <div id="chat-container">
+        <div class="message bot">Text2 AI: Ready! Super lightweight 270M model is online.</div>
+    </div>
+
+    <!-- Typing Indicator Bubble -->
+    <div id="typing-indicator" class="typing-container">
+        <div class="typing-dots">
+            <div class="dot"></div>
+            <div class="dot"></div>
+            <div class="dot"></div>
+        </div>
+    </div>
+
+    <div class="input-area-wrapper">
+        <form class="input-area" id="chat-form">
+            <input type="text" id="user-input" placeholder="Type a message..." autocomplete="off">
+            <button type="submit" id="send-btn" aria-label="Send">
+                <!-- SVG Send Icon -->
+                <svg viewBox="0 0 24 24">
+                    <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"></path>
+                </svg>
+            </button>
+        </form>
+    </div>
+
+    <script type="module">
+        import { Client } from "https://cdn.jsdelivr.net/npm/@gradio/client/+esm";
+
+        // !!! LINK SPACE CỦA ANH !!!
+        const SPACE_ID = "https://giacmobongda-chat1.hf.space"; 
+
+        const form = document.getElementById('chat-form');
+        const input = document.getElementById('user-input');
+        const container = document.getElementById('chat-container');
+        const typingIndicator = document.getElementById('typing-indicator');
+
+        function createMsg(isUser) {
+            const div = document.createElement('div');
+            div.className = `message ${isUser ? 'user' : 'bot'}`;
+            
+            // Insert before the typing indicator to keep typing at bottom if visible
+            if (typingIndicator.parentNode === container) {
+                container.insertBefore(div, typingIndicator);
+            } else {
+                container.appendChild(div);
+            }
+            
+            scrollToBottom();
+            return div;
+        }
+
+        function scrollToBottom() {
+            container.scrollTop = container.scrollHeight;
+        }
+
+        function showTyping() {
+            container.appendChild(typingIndicator); // Move to bottom
+            typingIndicator.style.display = 'block'; // Or flex
+            typingIndicator.style.display = 'inline-block'; // Keep bubble size
+            scrollToBottom();
+        }
+
+        function hideTyping() {
+            typingIndicator.style.display = 'none';
+        }
+
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const text = input.value.trim();
+            if (!text) return;
+
+            // 1. Hiển thị tin nhắn người dùng
+            createMsg(true).textContent = text;
+            input.value = '';
+            
+            // 2. Hiển thị hiệu ứng typing
+            showTyping();
+
+            try {
+                const client = await Client.connect(SPACE_ID);
+                
+                // Tạo bubble cho Bot (nhưng chưa điền text vội)
+                hideTyping();
+                const botDiv = createMsg(false);
+                
+                // Gửi và nhận Stream
+                const submission = client.submit("/chat", { message: text });
+                
+                for await (const msg of submission) {
+                    botDiv.textContent = msg.data; // Cập nhật chữ liên tục
+                    scrollToBottom();
+                }
+            } catch (err) {
+                hideTyping();
+                createMsg(false).textContent = "Connection error: " + err.message;
+            } finally {
+                hideTyping();
+            }
+        });
+    </script>
+</body>
+</html>
