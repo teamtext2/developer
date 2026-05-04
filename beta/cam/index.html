@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>SocialCam - App</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        :root {
+            --bg-color: #0a0a0a;
+            --nav-bg: rgba(20, 20, 20, 0.8);
+            --accent-color: #ffffff;
+            --text-main: #ffffff;
+            --text-muted: #888888;
+            --glass: rgba(255, 255, 255, 0.1);
+            --glass-border: rgba(255, 255, 255, 0.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            height: 100vh;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        #app-header {
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: linear-gradient(to bottom, rgba(0, 0, 0, 0.8), transparent);
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 100;
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--glass-border);
+        }
+
+        #app-header h1 {
+            font-size: 1.2rem;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+        }
+
+        #content-frame {
+            flex: 1;
+            width: 100%;
+            border: none;
+            background-color: var(--bg-color);
+        }
+
+        #bottom-nav {
+            position: fixed;
+            bottom: 25px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 92%;
+            max-width: 420px;
+            height: 70px;
+            background: rgba(15, 15, 15, 0.75);
+            backdrop-filter: blur(25px) saturate(180%);
+            -webkit-backdrop-filter: blur(25px) saturate(180%);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 35px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 8px;
+            z-index: 1000;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.6);
+        }
+
+        .nav-item {
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: rgba(255, 255, 255, 0.4);
+            text-decoration: none;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            flex: 1;
+            height: 100%;
+            z-index: 2;
+        }
+
+        .nav-item.active {
+            color: #ffffff;
+        }
+
+        .nav-item i {
+            width: 24px;
+            height: 24px;
+            margin-bottom: 2px;
+            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .nav-item.active i {
+            transform: scale(1.1) translateY(-2px);
+        }
+
+        .nav-item span {
+            font-size: 9px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            opacity: 0.6;
+            transition: all 0.3s ease;
+        }
+
+        .nav-item.active span {
+            opacity: 1;
+        }
+
+        /* Center button (Newfest) - Native Style */
+        .nav-item.center-btn {
+            background: #ffffff;
+            color: #000000;
+            border-radius: 50%;
+            width: 54px;
+            height: 54px;
+            flex: none;
+            margin: 0 10px;
+            box-shadow: 0 8px 20px rgba(255, 255, 255, 0.2);
+            transform: translateY(0);
+        }
+
+        .nav-item.center-btn:active {
+            transform: scale(0.9);
+        }
+
+        .nav-item.center-btn i {
+            width: 26px;
+            height: 26px;
+            margin-bottom: 0;
+        }
+
+        /* Sliding Indicator Pill */
+        .nav-indicator-pill {
+            position: absolute;
+            height: 48px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 24px;
+            transition: all 0.4s cubic-bezier(0.19, 1, 0.22, 1);
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        /* App Header Enhancement */
+        #app-header {
+            padding: 20px 25px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(10, 10, 10, 0.5);
+            backdrop-filter: blur(15px);
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 100;
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .header-actions {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.05);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+    </style>
+</head>
+
+<body>
+
+    <header id="app-header">
+        <h1>SocialCam</h1>
+        <div class="header-actions">
+            <i data-lucide="bell" style="width: 20px; height: 20px;"></i>
+        </div>
+    </header>
+
+    <iframe id="content-frame" src="page/cam.html"></iframe>
+
+    <nav id="bottom-nav">
+        <div class="nav-indicator-pill" id="nav-pill"></div>
+
+        <a href="page/cam.html" class="nav-item active" onclick="loadPage(event, this)">
+            <svg class="nav-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                stroke-linecap="round" stroke-linejoin="round">
+                <path class="icon-outline"
+                    d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path>
+                <circle class="icon-outline" cx="12" cy="13" r="4"></circle>
+                <path class="icon-fill"
+                    d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z M12 17a4 4 0 1 0 0-8 4 4 0 0 0 0 8z"
+                    fill="currentColor"></path>
+            </svg>
+            <span>Máy ảnh</span>
+        </a>
+
+        <a href="page/newfest.html" class="nav-item center-btn" onclick="loadPage(event, this)">
+            <svg class="nav-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+                stroke-linecap="round" stroke-linejoin="round">
+                <line x1="12" y1="5" x2="12" y2="19"></line>
+                <line x1="5" y1="12" x2="19" y2="12"></line>
+            </svg>
+        </a>
+
+        <a href="page/image.html" class="nav-item" onclick="loadPage(event, this)">
+            <svg class="nav-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                stroke-linecap="round" stroke-linejoin="round">
+                <rect class="icon-outline" x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                <circle class="icon-outline" cx="8.5" cy="8.5" r="1.5"></circle>
+                <polyline class="icon-outline" points="21 15 16 10 5 21"></polyline>
+                <path class="icon-fill"
+                    d="M3 5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5zm6.5 4.5a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3zM5 21h14l-5-5-5 5-4-4z"
+                    fill="currentColor"></path>
+            </svg>
+            <span>Bộ sưu tập</span>
+        </a>
+    </nav>
+
+    <style>
+        .nav-svg {
+            width: 26px;
+            height: 26px;
+            margin-bottom: 2px;
+            transition: all 0.3s ease;
+        }
+
+        .icon-fill {
+            display: none;
+        }
+
+        .nav-item.active .icon-outline {
+            display: none;
+        }
+
+        .nav-item.active .icon-fill {
+            display: block;
+        }
+
+        .nav-item.active .nav-svg {
+            transform: scale(1.1) translateY(-2px);
+        }
+
+        .center-btn .nav-svg {
+            width: 28px;
+            height: 28px;
+            margin-bottom: 0;
+            color: #000;
+        }
+    </style>
+
+    <script>
+        lucide.createIcons();
+
+        const pill = document.getElementById('nav-pill');
+        const navItems = document.querySelectorAll('.nav-item');
+
+        function updatePill(element) {
+            if (element.classList.contains('center-btn')) {
+                pill.style.opacity = '0';
+                pill.style.transform = 'scale(0.8)';
+                return;
+            }
+
+            const rect = element.getBoundingClientRect();
+            const navRect = document.getElementById('bottom-nav').getBoundingClientRect();
+
+            pill.style.opacity = '1';
+            pill.style.transform = 'scale(1)';
+            pill.style.width = `${rect.width - 12}px`;
+            pill.style.left = `${rect.left - navRect.left + 6}px`;
+        }
+
+        // Initialize pill
+        window.addEventListener('load', () => {
+            updatePill(document.querySelector('.nav-item.active'));
+        });
+
+        function loadPage(event, element) {
+            event.preventDefault();
+            const url = element.getAttribute('href');
+
+            // Fade out current content
+            const frame = document.getElementById('content-frame');
+            frame.style.opacity = '0';
+
+            setTimeout(() => {
+                frame.src = url;
+                frame.onload = () => {
+                    frame.style.opacity = '1';
+                };
+            }, 200);
+
+            navItems.forEach(item => item.classList.remove('active'));
+            element.classList.add('active');
+
+            updatePill(element);
+
+            const header = document.getElementById('app-header');
+            if (url.includes('cam.html')) {
+                header.style.transform = 'translateY(-100%)';
+                header.style.opacity = '0';
+            } else {
+                header.style.transform = 'translateY(0)';
+                header.style.opacity = '1';
+            }
+        }
+
+        // Handle resizing
+        window.addEventListener('resize', () => {
+            updatePill(document.querySelector('.nav-item.active'));
+        });
+    </script>
+</body>
+
+</html>

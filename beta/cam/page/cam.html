@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Camera - SocialCam</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: #000;
+            height: 100vh;
+            overflow: hidden;
+            font-family: 'Inter', sans-serif;
+        }
+
+        #video-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        #camera-ui {
+            position: absolute;
+            bottom: 110px;
+            width: 100%;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            padding: 0 30px;
+            z-index: 10;
+        }
+
+        .shutter-outer {
+            width: 84px;
+            height: 84px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(10px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            border: 3px solid #fff;
+        }
+
+        .shutter-inner {
+            width: 64px;
+            height: 64px;
+            border-radius: 50%;
+            background-color: #fff;
+            box-shadow: inset 0 0 10px rgba(0,0,0,0.1);
+            transition: all 0.2s ease;
+        }
+
+        .shutter-outer:active .shutter-inner {
+            transform: scale(0.85);
+            background-color: rgba(255,255,255,0.8);
+        }
+
+        .side-btn {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background: rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(15px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            border: 1px solid rgba(255,255,255,0.1);
+            transition: all 0.2s ease;
+        }
+
+        .side-btn:active {
+            transform: scale(0.9);
+            background: rgba(255,255,255,0.2);
+        }
+
+        /* Flash Effect */
+        #flash {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #fff;
+            z-index: 1000;
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        @keyframes flashAnim {
+            0% { opacity: 1; }
+            100% { opacity: 0; }
+        }
+
+        .flash-active {
+            animation: flashAnim 0.3s ease-out;
+        }
+
+        #status-msg {
+            position: absolute;
+            top: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(255,255,255,0.9);
+            padding: 10px 20px;
+            border-radius: 25px;
+            color: #000;
+            font-size: 0.85rem;
+            font-weight: 600;
+            z-index: 20;
+            display: none;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+            animation: slideDown 0.3s ease-out;
+        }
+
+        @keyframes slideDown {
+            from { transform: translate(-50%, -20px); opacity: 0; }
+            to { transform: translate(-50%, 0); opacity: 1; }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="flash"></div>
+    <div id="status-msg">Đã lưu ảnh!</div>
+
+    <div id="video-container">
+        <video id="video" autoplay playsinline muted></video>
+        <canvas id="capture-canvas" style="display: none;"></canvas>
+    </div>
+
+    <div id="camera-ui">
+        <div class="side-btn">
+            <i data-lucide="zap"></i>
+        </div>
+        
+        <div class="shutter-outer" id="shutter-btn">
+            <div class="shutter-inner"></div>
+        </div>
+
+        <div class="side-btn" onclick="switchCamera()">
+            <i data-lucide="refresh-cw"></i>
+        </div>
+    </div>
+
+    <script src="../js/db.js"></script>
+    <script>
+        lucide.createIcons();
+        
+        const video = document.getElementById('video');
+        const canvas = document.getElementById('capture-canvas');
+        const statusMsg = document.getElementById('status-msg');
+        const shutterBtn = document.getElementById('shutter-btn');
+        const flash = document.getElementById('flash');
+
+        async function initCamera() {
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({ 
+                    video: { facingMode: 'user', width: { ideal: 1920 }, height: { ideal: 1080 } }, 
+                    audio: false 
+                });
+                video.srcObject = stream;
+            } catch (err) {
+                console.error("Lỗi truy cập camera: ", err);
+                statusMsg.textContent = "Không thể truy cập camera.";
+                statusMsg.style.display = 'block';
+            }
+        }
+
+        async function takePhoto() {
+            // Hiệu ứng flash
+            flash.classList.remove('flash-active');
+            void flash.offsetWidth; // Trigger reflow
+            flash.classList.add('flash-active');
+
+            canvas.width = video.videoWidth;
+            canvas.height = video.videoHeight;
+            const context = canvas.getContext('2d');
+            context.drawImage(video, 0, 0, canvas.width, canvas.height);
+            
+            canvas.toBlob(async (blob) => {
+                try {
+                    await savePhoto(blob);
+                    statusMsg.style.display = 'block';
+                    setTimeout(() => statusMsg.style.display = 'none', 1500);
+                } catch (err) {
+                    console.error("Lỗi lưu ảnh:", err);
+                }
+            }, 'image/jpeg', 0.9);
+        }
+
+        shutterBtn.addEventListener('click', takePhoto);
+
+        function switchCamera() {
+            console.log("Switching camera...");
+            // Logic đổi camera (front/back) có thể thêm ở đây
+        }
+
+        initCamera();
+    </script>
+</body>
+</html>
