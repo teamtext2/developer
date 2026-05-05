@@ -962,6 +962,8 @@
 
         // --- APP SYSTEM ---
         let text2Apps = [];
+        let openWindows = {};
+        let zIndexCounter = 1000;
 
         async function loadApps() {
             try {
@@ -998,12 +1000,18 @@
                 const item = document.createElement('div');
                 item.className = 'app-item';
                 item.setAttribute('data-name', app.name.toLowerCase());
-                item.setAttribute('onclick', `openApp('${app.id}')`);
                 item.setAttribute('draggable', 'true');
                 item.innerHTML = `
                     <img src="${app.icon}" loading="lazy" alt="${app.name}">
                     <span>${app.name}</span>
                 `;
+
+                // Use direct assignment for more reliability
+                item.onclick = (e) => {
+                    console.log("Opening app:", app.id);
+                    openApp(app.id);
+                };
+
                 fragment.appendChild(item);
             });
 
@@ -1063,6 +1071,10 @@
         // Window Management
         function openApp(id) {
             const app = text2Apps.find(a => a.id === id);
+            if (!app) {
+                console.error("App not found:", id);
+                return;
+            }
 
             if (openWindows[id]) {
                 const win = document.getElementById(`win-${id}`);
