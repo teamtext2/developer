@@ -1,9 +1,10 @@
 <!DOCTYPE html>
 <html lang="vi">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>SocialCam - App</title>
+    <title>text2 cam - App</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -141,7 +142,15 @@
             animation: fadeIn 0.3s ease;
         }
 
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+
+            to {
+                opacity: 1;
+            }
+        }
 
         .search-header {
             display: flex;
@@ -171,9 +180,16 @@
             font-size: 16px;
         }
 
-        .close-search { color: #fff; cursor: pointer; font-weight: 600; }
+        .close-search {
+            color: #fff;
+            cursor: pointer;
+            font-weight: 600;
+        }
 
-        #search-results-list { flex: 1; overflow-y: auto; }
+        #search-results-list {
+            flex: 1;
+            overflow-y: auto;
+        }
 
         .user-result-item {
             display: flex;
@@ -186,18 +202,36 @@
             border: 1px solid var(--glass-border);
         }
 
-        .user-result-info { display: flex; align-items: center; gap: 12px; }
-        .user-result-avatar { width: 45px; height: 45px; border-radius: 50%; object-fit: cover; }
+        .user-result-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .user-result-avatar {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
         .add-friend-btn {
-            background: #fff; color: #000; border: none; padding: 8px 16px;
-            border-radius: 12px; font-weight: 700; font-size: 13px; cursor: pointer;
+            background: #fff;
+            color: #000;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 12px;
+            font-weight: 700;
+            font-size: 13px;
+            cursor: pointer;
         }
     </style>
 </head>
+
 <body>
 
     <header id="app-header">
-        <h1>SocialCam</h1>
+        <h1>text2 cam</h1>
         <div style="display: flex; gap: 10px;">
             <div class="header-actions" onclick="openSearch()">
                 <i data-lucide="search" style="width: 18px; height: 18px;"></i>
@@ -212,7 +246,8 @@
         <div class="search-header">
             <div class="search-input-wrapper">
                 <i data-lucide="search" style="width: 18px; color: var(--text-muted);"></i>
-                <input type="text" id="global-search-input" placeholder="Tìm tên người dùng..." oninput="handleSearch(this.value)">
+                <input type="text" id="global-search-input" placeholder="Tìm tên người dùng..."
+                    oninput="handleSearch(this.value)">
             </div>
             <div class="close-search" onclick="closeSearch()">Hủy</div>
         </div>
@@ -226,7 +261,8 @@
             <i data-lucide="camera"></i>
             <span style="font-size: 9px; margin-top: 4px;">Máy ảnh</span>
         </a>
-        <a href="page/newfest.html" class="nav-item" onclick="loadPage(event, this)" style="background:#fff; color:#000; border-radius:50%; width:50px; height:50px; flex:none; margin:0 10px;">
+        <a href="page/newfest.html" class="nav-item" onclick="loadPage(event, this)"
+            style="background:#fff; color:#000; border-radius:50%; width:50px; height:50px; flex:none; margin:0 10px;">
             <i data-lucide="plus" style="width: 28px; height: 28px;"></i>
         </a>
         <a href="page/image.html" class="nav-item" onclick="loadPage(event, this)">
@@ -236,7 +272,7 @@
     </nav>
 
     <script>
-        const user = JSON.parse(localStorage.getItem('socialcam_user'));
+        const user = JSON.parse(localStorage.getItem('text2cam_user'));
         if (!user) window.location.href = "login/index.html";
 
         lucide.createIcons();
@@ -282,7 +318,7 @@
             } catch (err) { alert("Lỗi khi kết bạn"); }
         }
 
-        function logout() { if (confirm("Đăng xuất?")) { localStorage.removeItem('socialcam_user'); window.location.reload(); } }
+        function logout() { if (confirm("Đăng xuất?")) { localStorage.removeItem('text2cam_user'); window.location.reload(); } }
 
         function loadPage(event, element) {
             event.preventDefault();
@@ -300,4 +336,5 @@
         }
     </script>
 </body>
+
 </html>

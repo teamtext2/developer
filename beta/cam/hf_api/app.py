@@ -40,7 +40,7 @@ def save_db(data):
 
 @app.get("/")
 def read_root():
-    return {"message": "SocialCam API is running", "status": "online"}
+    return {"message": "text2 cam API is running", "status": "online"}
 
 @app.post("/api/register")
 async def register(

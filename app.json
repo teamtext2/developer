@@ -54,7 +54,7 @@
         "tag": "ai"
     },
     {
-        "t": "Camera",
+        "t": "text2 cam",
         "l": "https://text2.co/app/camera/",
         "i": "https://text2.co/app/camera/apple-touch-icon.png",
         "tag": "images"

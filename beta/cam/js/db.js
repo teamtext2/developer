@@ -1,4 +1,4 @@
-const DB_NAME = 'SocialCamDB';
+const DB_NAME = 'text2cam_db';
 const DB_VERSION = 1;
 const STORE_NAME = 'photos';
 

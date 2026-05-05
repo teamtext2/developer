@@ -51,7 +51,7 @@ modeToggle.addEventListener('click', () => {
     
     if (isLoginMode) {
         title.innerText = "Chào mừng trở lại";
-        subtitle.innerText = "Đăng nhập để tiếp tục với SocialCam";
+        subtitle.innerText = "Đăng nhập để tiếp tục với text2 cam";
         btnText.innerText = "Đăng nhập";
         modeText.innerText = "Chưa có tài khoản?";
         modeToggle.innerText = "Đăng ký";
@@ -59,7 +59,7 @@ modeToggle.addEventListener('click', () => {
         usernameGroup.style.display = 'none';
     } else {
         title.innerText = "Tạo tài khoản";
-        subtitle.innerText = "Tham gia cộng đồng SocialCam ngay hôm nay";
+        subtitle.innerText = "Tham gia cộng đồng text2 cam ngay hôm nay";
         btnText.innerText = "Đăng ký";
         modeText.innerText = "Đã có tài khoản?";
         modeToggle.innerText = "Đăng nhập";
@@ -119,7 +119,7 @@ authForm.addEventListener('submit', async (e) => {
             showStatus(isLoginMode ? "Đăng nhập thành công!" : "Đăng ký thành công!", "success");
             
             // Store user info in localStorage
-            localStorage.setItem('socialcam_user', JSON.stringify(result.user));
+            localStorage.setItem('text2cam_user', JSON.stringify(result.user));
             
             // Example: Redirect to main page after 1s
             setTimeout(() => {
