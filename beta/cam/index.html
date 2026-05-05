@@ -7,17 +7,18 @@
     <title>SocialCam - App</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/lucide@latest"></script>
     <style>
         :root {
-            --bg-color: #0a0a0a;
-            --nav-bg: rgba(20, 20, 20, 0.8);
+            --bg-color: #050505;
+            --nav-bg: rgba(20, 20, 20, 0.6);
             --accent-color: #ffffff;
             --text-main: #ffffff;
-            --text-muted: #888888;
-            --glass: rgba(255, 255, 255, 0.1);
+            --text-muted: rgba(255, 255, 255, 0.5);
+            --glass: rgba(255, 255, 255, 0.08);
             --glass-border: rgba(255, 255, 255, 0.1);
+            --ios-blur: blur(30px) saturate(180%);
         }
 
         * {
@@ -30,6 +31,7 @@
         body {
             font-family: 'Inter', sans-serif;
             background-color: var(--bg-color);
+            background: radial-gradient(circle at 50% 0%, #1a1a1a, #050505);
             color: var(--text-main);
             height: 100vh;
             overflow: hidden;
@@ -37,53 +39,89 @@
             flex-direction: column;
         }
 
+        /* Subtle background glow for index */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at 10% 10%, rgba(255, 255, 255, 0.03) 0%, transparent 50%);
+            z-index: -1;
+            pointer-events: none;
+        }
+
         #app-header {
-            padding: 15px 20px;
+            padding: 20px 25px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            background: linear-gradient(to bottom, rgba(0, 0, 0, 0.8), transparent);
-            position: absolute;
+            background: rgba(0, 0, 0, 0.4);
+            backdrop-filter: var(--ios-blur);
+            -webkit-backdrop-filter: var(--ios-blur);
+            position: fixed;
             top: 0;
             left: 0;
             right: 0;
             z-index: 100;
-            backdrop-filter: blur(10px);
             border-bottom: 1px solid var(--glass-border);
+            transition: all 0.5s cubic-bezier(0.19, 1, 0.22, 1);
         }
 
         #app-header h1 {
-            font-size: 1.2rem;
+            font-size: 1.1rem;
             font-weight: 700;
             letter-spacing: -0.5px;
+            background: linear-gradient(to bottom, #fff, #aaa);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .header-actions {
+            width: 38px;
+            height: 38px;
+            border-radius: 12px;
+            background: var(--glass);
+            border: 1px solid var(--glass-border);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+
+        .header-actions:active {
+            transform: scale(0.9);
+            background: rgba(255, 255, 255, 0.15);
         }
 
         #content-frame {
             flex: 1;
             width: 100%;
             border: none;
-            background-color: var(--bg-color);
+            background-color: transparent;
+            transition: opacity 0.4s ease;
         }
 
         #bottom-nav {
             position: fixed;
-            bottom: 25px;
+            bottom: 30px;
             left: 50%;
             transform: translateX(-50%);
-            width: 92%;
-            max-width: 420px;
-            height: 70px;
-            background: rgba(15, 15, 15, 0.75);
-            backdrop-filter: blur(25px) saturate(180%);
-            -webkit-backdrop-filter: blur(25px) saturate(180%);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 35px;
+            width: 90%;
+            max-width: 400px;
+            height: 72px;
+            background: var(--nav-bg);
+            backdrop-filter: var(--ios-blur);
+            -webkit-backdrop-filter: var(--ios-blur);
+            border: 1px solid var(--glass-border);
+            border-radius: 36px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 0 8px;
+            padding: 0 10px;
             z-index: 1000;
-            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.6);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
         }
 
         .nav-item {
@@ -92,26 +130,26 @@
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            color: rgba(255, 255, 255, 0.4);
+            color: var(--text-muted);
             text-decoration: none;
-            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            transition: all 0.4s cubic-bezier(0.19, 1, 0.22, 1);
             flex: 1;
             height: 100%;
             z-index: 2;
         }
 
         .nav-item.active {
-            color: #ffffff;
+            color: var(--accent-color);
         }
 
-        .nav-item i {
+        .nav-svg {
             width: 24px;
             height: 24px;
-            margin-bottom: 2px;
-            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            margin-bottom: 4px;
+            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
 
-        .nav-item.active i {
+        .nav-item.active .nav-svg {
             transform: scale(1.1) translateY(-2px);
         }
 
@@ -119,7 +157,7 @@
             font-size: 9px;
             font-weight: 600;
             text-transform: uppercase;
-            letter-spacing: 0.8px;
+            letter-spacing: 0.5px;
             opacity: 0.6;
             transition: all 0.3s ease;
         }
@@ -128,75 +166,63 @@
             opacity: 1;
         }
 
-        /* Center button (Newfest) - Native Style */
+        /* Center button (Newfest) - Premium Style */
         .nav-item.center-btn {
             background: #ffffff;
             color: #000000;
             border-radius: 50%;
-            width: 54px;
-            height: 54px;
+            width: 56px;
+            height: 56px;
             flex: none;
-            margin: 0 10px;
-            box-shadow: 0 8px 20px rgba(255, 255, 255, 0.2);
+            margin: 0 12px;
+            box-shadow: 0 10px 25px rgba(255, 255, 255, 0.15);
             transform: translateY(0);
         }
 
         .nav-item.center-btn:active {
-            transform: scale(0.9);
+            transform: scale(0.9) translateY(2px);
         }
 
-        .nav-item.center-btn i {
-            width: 26px;
-            height: 26px;
+        .center-btn .nav-svg {
+            width: 28px;
+            height: 28px;
             margin-bottom: 0;
+            color: #000;
+            stroke-width: 2.5;
         }
 
         /* Sliding Indicator Pill */
         .nav-indicator-pill {
             position: absolute;
-            height: 48px;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 24px;
-            transition: all 0.4s cubic-bezier(0.19, 1, 0.22, 1);
+            height: 52px;
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: 26px;
+            transition: all 0.5s cubic-bezier(0.19, 1, 0.22, 1);
             z-index: 1;
             pointer-events: none;
+            border: 1px solid rgba(255, 255, 255, 0.05);
         }
 
-        /* App Header Enhancement */
-        #app-header {
-            padding: 20px 25px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            background: rgba(10, 10, 10, 0.5);
-            backdrop-filter: blur(15px);
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            z-index: 100;
-            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        .icon-fill {
+            display: none;
         }
 
-        .header-actions {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            background: rgba(255, 255, 255, 0.05);
-            display: flex;
-            align-items: center;
-            justify-content: center;
+        .nav-item.active .icon-outline {
+            display: none;
+        }
+
+        .nav-item.active .icon-fill {
+            display: block;
         }
     </style>
 </head>
 
 <body>
 
-    <header id="app-header">
+    <header id="app-header" style="transform: translateY(-100%); opacity: 0;">
         <h1>SocialCam</h1>
         <div class="header-actions">
-            <i data-lucide="bell" style="width: 20px; height: 20px;"></i>
+            <i data-lucide="bell" style="width: 18px; height: 18px;"></i>
         </div>
     </header>
 
@@ -240,48 +266,18 @@
         </a>
     </nav>
 
-    <style>
-        .nav-svg {
-            width: 26px;
-            height: 26px;
-            margin-bottom: 2px;
-            transition: all 0.3s ease;
-        }
-
-        .icon-fill {
-            display: none;
-        }
-
-        .nav-item.active .icon-outline {
-            display: none;
-        }
-
-        .nav-item.active .icon-fill {
-            display: block;
-        }
-
-        .nav-item.active .nav-svg {
-            transform: scale(1.1) translateY(-2px);
-        }
-
-        .center-btn .nav-svg {
-            width: 28px;
-            height: 28px;
-            margin-bottom: 0;
-            color: #000;
-        }
-    </style>
-
     <script>
         lucide.createIcons();
 
         const pill = document.getElementById('nav-pill');
         const navItems = document.querySelectorAll('.nav-item');
+        const frame = document.getElementById('content-frame');
+        const header = document.getElementById('app-header');
 
         function updatePill(element) {
             if (element.classList.contains('center-btn')) {
                 pill.style.opacity = '0';
-                pill.style.transform = 'scale(0.8)';
+                pill.style.transform = 'translateX(-50%) scale(0.8)';
                 return;
             }
 
@@ -289,22 +285,30 @@
             const navRect = document.getElementById('bottom-nav').getBoundingClientRect();
 
             pill.style.opacity = '1';
-            pill.style.transform = 'scale(1)';
-            pill.style.width = `${rect.width - 12}px`;
-            pill.style.left = `${rect.left - navRect.left + 6}px`;
+            pill.style.width = `${rect.width - 16}px`;
+            pill.style.left = `${rect.left - navRect.left + 8}px`;
         }
 
-        // Initialize pill
+        // Initialize
         window.addEventListener('load', () => {
             updatePill(document.querySelector('.nav-item.active'));
+
+            // Check initial page to hide/show header
+            if (frame.src.includes('cam.html')) {
+                header.style.transform = 'translateY(-100%)';
+                header.style.opacity = '0';
+            } else {
+                header.style.transform = 'translateY(0)';
+                header.style.opacity = '1';
+            }
         });
 
         function loadPage(event, element) {
             event.preventDefault();
             const url = element.getAttribute('href');
+            if (frame.src.endsWith(url)) return;
 
-            // Fade out current content
-            const frame = document.getElementById('content-frame');
+            // Fade out
             frame.style.opacity = '0';
 
             setTimeout(() => {
@@ -312,14 +316,13 @@
                 frame.onload = () => {
                     frame.style.opacity = '1';
                 };
-            }, 200);
+            }, 250);
 
             navItems.forEach(item => item.classList.remove('active'));
             element.classList.add('active');
 
             updatePill(element);
 
-            const header = document.getElementById('app-header');
             if (url.includes('cam.html')) {
                 header.style.transform = 'translateY(-100%)';
                 header.style.opacity = '0';
@@ -329,7 +332,6 @@
             }
         }
 
-        // Handle resizing
         window.addEventListener('resize', () => {
             updatePill(document.querySelector('.nav-item.active'));
         });
