@@ -38,13 +38,6 @@ def save_db(data):
     with open(DB_FILE, "w") as f:
         json.dump(data, f, indent=4)
 
-# Models
-class User(BaseModel):
-    id: str
-    username: str
-    email: str
-    avatar: str
-
 @app.get("/")
 def read_root():
     return {"message": "SocialCam API is running", "status": "online"}
@@ -57,36 +50,29 @@ async def register(
     avatar: UploadFile = File(...)
 ):
     db = load_db()
-    
-    # Check if user already exists
     for u_id, u_data in db["users"].items():
         if u_data["email"] == email:
             raise HTTPException(status_code=400, detail="Email already registered")
         if u_data["username"] == username:
             raise HTTPException(status_code=400, detail="Username already taken")
     
-    # Save Avatar
     file_extension = os.path.splitext(avatar.filename)[1]
     avatar_filename = f"avatar_{uuid.uuid4()}{file_extension}"
     avatar_path = os.path.join(UPLOAD_DIR, avatar_filename)
-    
     with open(avatar_path, "wb") as buffer:
         content = await avatar.read()
         buffer.write(content)
     
-    # Create User
     user_id = str(uuid.uuid4())
     db["users"][user_id] = {
         "id": user_id,
         "username": username,
         "email": email,
-        "password": password, # In production, use hashing
+        "password": password,
         "avatar": f"/uploads/{avatar_filename}"
     }
     db["friends"][user_id] = []
-    
     save_db(db)
-    
     return {"status": "success", "user": db["users"][user_id]}
 
 @app.post("/api/login")
@@ -95,15 +81,51 @@ async def login(
     password: str = Form(...)
 ):
     db = load_db()
-    
     for user_id, user_data in db["users"].items():
         if user_data["email"] == email and user_data["password"] == password:
-            # Return user data without password
             user_info = user_data.copy()
             del user_info["password"]
             return {"status": "success", "user": user_info}
-            
     raise HTTPException(status_code=401, detail="Invalid email or password")
+
+@app.post("/api/update_profile")
+async def update_profile(
+    user_id: str = Form(...),
+    username: Optional[str] = Form(None),
+    avatar: Optional[UploadFile] = File(None)
+):
+    db = load_db()
+    if user_id not in db["users"]:
+        raise HTTPException(status_code=404, detail="User not found")
+    
+    if username:
+        # Check if username is taken by another user
+        for u_id, u_data in db["users"].items():
+            if u_id != user_id and u_data["username"] == username:
+                raise HTTPException(status_code=400, detail="Username already taken")
+        db["users"][user_id]["username"] = username
+        # Update username in posts too
+        for post in db["posts"]:
+            if post["user_id"] == user_id:
+                post["username"] = username
+                
+    if avatar:
+        file_extension = os.path.splitext(avatar.filename)[1]
+        avatar_filename = f"avatar_{uuid.uuid4()}{file_extension}"
+        avatar_path = os.path.join(UPLOAD_DIR, avatar_filename)
+        with open(avatar_path, "wb") as buffer:
+            content = await avatar.read()
+            buffer.write(content)
+        db["users"][user_id]["avatar"] = f"/uploads/{avatar_filename}"
+        # Update avatar in posts too
+        for post in db["posts"]:
+            if post["user_id"] == user_id:
+                post["user_avatar"] = db["users"][user_id]["avatar"]
+
+    save_db(db)
+    user_info = db["users"][user_id].copy()
+    del user_info["password"]
+    return {"status": "success", "user": user_info}
 
 @app.get("/api/search")
 async def search_user(query: str):
@@ -111,10 +133,7 @@ async def search_user(query: str):
     results = []
     for user_id, user_data in db["users"].items():
         if query.lower() in user_data["username"].lower():
-            results.append({
-                "username": user_data["username"],
-                "avatar": user_data["avatar"]
-            })
+            results.append({"username": user_data["username"], "avatar": user_data["avatar"]})
     return results
 
 @app.post("/api/add_friend")
@@ -123,30 +142,22 @@ async def add_friend(
     friend_username: str = Form(...)
 ):
     db = load_db()
-    
-    if user_id not in db["users"]:
-        raise HTTPException(status_code=404, detail="User not found")
-        
-    friend_id = None
-    for u_id, u_data in db["users"].items():
-        if u_data["username"] == friend_username:
-            friend_id = u_id
-            break
-            
-    if not friend_id:
-        raise HTTPException(status_code=404, detail="Friend user not found")
-        
-    if friend_id == user_id:
-        raise HTTPException(status_code=400, detail="You cannot friend yourself")
-        
+    if user_id not in db["users"]: raise HTTPException(status_code=404, detail="User not found")
+    friend_id = next((u_id for u_id, u_data in db["users"].items() if u_data["username"] == friend_username), None)
+    if not friend_id: raise HTTPException(status_code=404, detail="Friend not found")
+    if friend_id == user_id: raise HTTPException(status_code=400, detail="Cannot friend self")
     if friend_id not in db["friends"][user_id]:
         db["friends"][user_id].append(friend_id)
-        # For simplicity, make it bidirectional
-        if user_id not in db["friends"][friend_id]:
-            db["friends"][friend_id].append(user_id)
-        
+        if user_id not in db["friends"][friend_id]: db["friends"][friend_id].append(user_id)
     save_db(db)
-    return {"status": "success", "message": f"You are now friends with {friend_username}"}
+    return {"status": "success"}
+
+@app.get("/api/friends")
+async def get_friends(user_id: str):
+    db = load_db()
+    if user_id not in db["users"]: raise HTTPException(status_code=404, detail="User not found")
+    friend_ids = db["friends"].get(user_id, [])
+    return [{"username": db["users"][f_id]["username"], "avatar": db["users"][f_id]["avatar"]} for f_id in friend_ids if f_id in db["users"]]
 
 @app.post("/api/posts")
 async def create_post(
@@ -155,20 +166,13 @@ async def create_post(
     image: UploadFile = File(...)
 ):
     db = load_db()
-    
-    if user_id not in db["users"]:
-        raise HTTPException(status_code=404, detail="User not found")
-        
-    # Save Image
+    if user_id not in db["users"]: raise HTTPException(status_code=404, detail="User not found")
     file_extension = os.path.splitext(image.filename)[1]
     image_filename = f"post_{uuid.uuid4()}{file_extension}"
     image_path = os.path.join(UPLOAD_DIR, image_filename)
-    
     with open(image_path, "wb") as buffer:
         content = await image.read()
         buffer.write(content)
-        
-    # Create Post
     post = {
         "id": str(uuid.uuid4()),
         "user_id": user_id,
@@ -178,49 +182,48 @@ async def create_post(
         "caption": caption,
         "timestamp": time.time()
     }
-    
-    db["posts"].insert(0, post) # Newest first
+    db["posts"].insert(0, post)
     save_db(db)
-    
     return {"status": "success", "post": post}
 
-@app.get("/api/friends")
-async def get_friends(user_id: str):
+@app.post("/api/update_post")
+async def update_post(
+    post_id: str = Form(...),
+    user_id: str = Form(...),
+    caption: str = Form(...)
+):
     db = load_db()
-    if user_id not in db["users"]:
-        raise HTTPException(status_code=404, detail="User not found")
-        
-    friend_ids = db["friends"].get(user_id, [])
-    friends = []
-    for f_id in friend_ids:
-        if f_id in db["users"]:
-            friends.append({
-                "username": db["users"][f_id]["username"],
-                "avatar": db["users"][f_id]["avatar"]
-            })
-    return friends
+    for post in db["posts"]:
+        if post["id"] == post_id and post["user_id"] == user_id:
+            post["caption"] = caption
+            save_db(db)
+            return {"status": "success"}
+    raise HTTPException(status_code=404, detail="Post not found")
+
+@app.post("/api/delete_post")
+async def delete_post(
+    post_id: str = Form(...),
+    user_id: str = Form(...)
+):
+    db = load_db()
+    initial_len = len(db["posts"])
+    db["posts"] = [p for p in db["posts"] if not (p["id"] == post_id and p["user_id"] == user_id)]
+    if len(db["posts"]) < initial_len:
+        save_db(db)
+        return {"status": "success"}
+    raise HTTPException(status_code=404, detail="Post not found")
 
 @app.get("/api/user_posts")
 async def get_user_posts(user_id: str):
     db = load_db()
-    user_posts = [p for p in db["posts"] if p["user_id"] == user_id]
-    return user_posts
+    return [p for p in db["posts"] if p["user_id"] == user_id]
 
 @app.get("/api/feed")
 async def get_feed(user_id: str):
     db = load_db()
-    
-    if user_id not in db["users"]:
-        # If user not found, maybe show global public posts? 
-        # For now, just return all posts if testing, or empty list
-        return db["posts"][:20] 
-        
     friends = db["friends"].get(user_id, [])
-    # Include self in feed
     visible_user_ids = set(friends + [user_id])
-    
-    feed = [p for p in db["posts"] if p["user_id"] in visible_user_ids]
-    return feed[:50]
+    return [p for p in db["posts"] if p["user_id"] in visible_user_ids][:50]
 
 if __name__ == "__main__":
     import uvicorn
