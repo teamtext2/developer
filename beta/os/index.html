@@ -965,7 +965,7 @@
 
         async function loadApps() {
             try {
-                const response = await fetch('../../app.json');
+                const response = await fetch('https://text2.co/app.json');
                 const data = await response.json();
 
                 text2Apps = data.map(app => ({
