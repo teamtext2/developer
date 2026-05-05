@@ -23,13 +23,14 @@ function initDB() {
     });
 }
 
-async function savePhoto(photoBlob) {
+async function savePhoto(photoBlob, caption = '') {
     const db = await initDB();
     return new Promise((resolve, reject) => {
         const transaction = db.transaction([STORE_NAME], 'readwrite');
         const store = transaction.objectStore(STORE_NAME);
         const photoRecord = {
             data: photoBlob,
+            caption: caption,
             timestamp: Date.now()
         };
         const request = store.add(photoRecord);

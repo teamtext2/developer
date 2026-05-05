@@ -267,6 +267,12 @@
     </nav>
 
     <script>
+        // Login Check
+        const user = JSON.parse(localStorage.getItem('socialcam_user'));
+        if (!user) {
+            window.location.href = "login/index.html";
+        }
+
         lucide.createIcons();
 
         const pill = document.getElementById('nav-pill');

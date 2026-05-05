@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Đăng ký - SocialCam</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+
+<body>
+    <div class="bg-glow">
+        <div class="glow-1"></div>
+        <div class="glow-2"></div>
+    </div>
+
+    <div class="login-card">
+        <div id="auth-header">
+            <h1 id="title">Tạo tài khoản</h1>
+            <p class="subtitle" id="subtitle">Tham gia cộng đồng SocialCam ngay hôm nay</p>
+        </div>
+
+        <form id="auth-form">
+            <div class="avatar-container" id="avatar-section">
+                <label for="avatar-input" class="avatar-preview" id="avatar-label">
+                    <i data-lucide="camera"></i>
+                    <img id="preview-img" src="" alt="Avatar Preview">
+                </label>
+                <div class="add-badge">
+                    <i data-lucide="plus" style="width: 14px; height: 14px;"></i>
+                </div>
+                <input type="file" id="avatar-input" accept="image/*">
+            </div>
+
+            <div class="form-group" id="username-group">
+                <div class="input-wrapper">
+                    <i data-lucide="user"></i>
+                    <input type="text" id="username" placeholder="Tên người dùng (username)">
+                </div>
+            </div>
+
+            <div class="form-group">
+                <div class="input-wrapper">
+                    <i data-lucide="mail"></i>
+                    <input type="email" id="email" placeholder="Địa chỉ Gmail" required>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <div class="input-wrapper">
+                    <i data-lucide="lock"></i>
+                    <input type="password" id="password" placeholder="Mật khẩu" required>
+                    <i data-lucide="eye" class="toggle-password" id="toggle-pwd"></i>
+                </div>
+            </div>
+
+            <button type="submit" class="submit-btn" id="submit-btn">
+                <span id="btn-text">Đăng ký</span>
+                <div class="loading-spinner" id="loader"></div>
+            </button>
+
+            <div id="status-message"></div>
+
+            <div class="switch-mode">
+                <span id="mode-text">Đã có tài khoản?</span>
+                <span id="mode-toggle">Đăng nhập</span>
+            </div>
+        </form>
+    </div>
+
+    <script src="script.js"></script>
+    <script>
+        lucide.createIcons();
+    </script>
+</body>
+
+</html>

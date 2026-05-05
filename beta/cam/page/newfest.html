@@ -29,12 +29,11 @@
             background: radial-gradient(circle at 50% 0%, #1a1a1a, #050505);
             color: var(--text);
             font-family: 'Inter', sans-serif;
-            padding: 100px 0 120px 0;
+            padding: 20px 0 120px 0;
             overflow-x: hidden;
             scroll-behavior: smooth;
         }
 
-        /* Beautiful Background Layer */
         .bg-glow {
             position: fixed;
             top: 0;
@@ -62,6 +61,71 @@
             padding: 0 15px;
         }
 
+        /* Search Bar */
+        .search-container {
+            margin-bottom: 25px;
+            position: sticky;
+            top: 10px;
+            z-index: 100;
+        }
+
+        .search-wrapper {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: var(--ios-blur);
+            border: 1px solid var(--ios-border);
+            border-radius: 20px;
+            padding: 12px 16px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .search-wrapper input {
+            background: none;
+            border: none;
+            color: #fff;
+            width: 100%;
+            outline: none;
+            font-size: 15px;
+        }
+
+        .search-results {
+            position: absolute;
+            top: 60px;
+            left: 0;
+            right: 0;
+            background: rgba(20, 20, 20, 0.95);
+            backdrop-filter: blur(30px);
+            border: 1px solid var(--ios-border);
+            border-radius: 20px;
+            max-height: 300px;
+            overflow-y: auto;
+            display: none;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+        }
+
+        .user-result {
+            padding: 12px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .user-result:last-child { border-bottom: none; }
+
+        .add-btn {
+            background: #fff;
+            color: #000;
+            border: none;
+            border-radius: 12px;
+            padding: 6px 12px;
+            font-size: 13px;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        /* Post Card */
         .post-card {
             background: var(--surface);
             backdrop-filter: var(--ios-blur);
@@ -77,10 +141,7 @@
         }
 
         @keyframes fadeIn {
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+            to { opacity: 1; transform: translateY(0); }
         }
 
         .post-header {
@@ -102,6 +163,7 @@
             border-radius: 50%;
             background: #222;
             border: 1px solid var(--ios-border);
+            object-fit: cover;
         }
 
         .username {
@@ -150,11 +212,6 @@
             gap: 6px;
             font-size: 0.9rem;
             font-weight: 600;
-            transition: transform 0.2s ease;
-        }
-
-        .action-btn:active {
-            transform: scale(0.9);
         }
 
         .post-text {
@@ -170,104 +227,172 @@
             color: #fff;
         }
 
-        /* Post stagger animation */
-        .post-card:nth-child(1) { animation-delay: 0.1s; }
-        .post-card:nth-child(2) { animation-delay: 0.25s; }
-        .post-card:nth-child(3) { animation-delay: 0.4s; }
-
+        .loading-text {
+            text-align: center;
+            padding: 50px;
+            color: var(--muted);
+        }
     </style>
 </head>
 <body>
-
     <div class="bg-glow">
         <div class="glow-1"></div>
     </div>
 
     <div class="feed-container">
-        <!-- Post 1 -->
-        <article class="post-card">
-            <div class="post-header">
-                <div class="user-info">
-                    <img class="user-avatar" src="https://api.dicebear.com/7.x/avataaars/svg?seed=Alex" alt="">
-                    <div>
-                        <p class="username">alex_photos</p>
-                        <p class="post-time">2 giờ trước</p>
-                    </div>
-                </div>
-                <i data-lucide="more-horizontal" style="color: var(--muted); width: 20px;"></i>
+        <!-- Search -->
+        <div class="search-container">
+            <div class="search-wrapper">
+                <i data-lucide="search" style="width: 18px; color: var(--muted);"></i>
+                <input type="text" id="user-search" placeholder="Tìm tên người dùng...">
             </div>
-            <div class="post-image">
-                <img src="https://picsum.photos/id/10/600/800" alt="Post content" loading="lazy">
-            </div>
-            <div class="post-content">
-                <div class="post-actions">
-                    <button class="action-btn"><i data-lucide="heart" style="width: 22px;"></i> 1.2k</button>
-                    <button class="action-btn"><i data-lucide="message-circle" style="width: 22px;"></i> 45</button>
-                    <button class="action-btn"><i data-lucide="send" style="width: 22px;"></i></button>
-                </div>
-                <div class="post-text">
-                    <span>alex_photos</span> Chào buổi sáng với những khung hình mới nhất từ chuyến đi Đà Lạt.
-                </div>
-            </div>
-        </article>
+            <div id="search-results" class="search-results"></div>
+        </div>
 
-        <!-- Post 2 -->
-        <article class="post-card">
-            <div class="post-header">
-                <div class="user-info">
-                    <img class="user-avatar" src="https://api.dicebear.com/7.x/avataaars/svg?seed=Emma" alt="">
-                    <div>
-                        <p class="username">emma_vibe</p>
-                        <p class="post-time">5 giờ trước</p>
-                    </div>
-                </div>
-                <i data-lucide="more-horizontal" style="color: var(--muted); width: 20px;"></i>
-            </div>
-            <div class="post-image">
-                <img src="https://picsum.photos/id/20/600/800" alt="Post content" loading="lazy">
-            </div>
-            <div class="post-content">
-                <div class="post-actions">
-                    <button class="action-btn"><i data-lucide="heart" style="width: 22px;"></i> 856</button>
-                    <button class="action-btn"><i data-lucide="message-circle" style="width: 22px;"></i> 12</button>
-                    <button class="action-btn"><i data-lucide="send" style="width: 22px;"></i></button>
-                </div>
-                <div class="post-text">
-                    <span>emma_vibe</span> Minimalist aesthetic. #vibes #minimalism
-                </div>
-            </div>
-        </article>
-
-        <!-- Post 3 -->
-        <article class="post-card">
-            <div class="post-header">
-                <div class="user-info">
-                    <img class="user-avatar" src="https://api.dicebear.com/7.x/avataaars/svg?seed=John" alt="">
-                    <div>
-                        <p class="username">tech_guru</p>
-                        <p class="post-time">1 ngày trước</p>
-                    </div>
-                </div>
-                <i data-lucide="more-horizontal" style="color: var(--muted); width: 20px;"></i>
-            </div>
-            <div class="post-image">
-                <img src="https://picsum.photos/id/30/600/800" alt="Post content" loading="lazy">
-            </div>
-            <div class="post-content">
-                <div class="post-actions">
-                    <button class="action-btn"><i data-lucide="heart" style="width: 22px;"></i> 2.4k</button>
-                    <button class="action-btn"><i data-lucide="message-circle" style="width: 22px;"></i> 128</button>
-                    <button class="action-btn"><i data-lucide="send" style="width: 22px;"></i></button>
-                </div>
-                <div class="post-text">
-                    <span>tech_guru</span> Đánh giá chi tiết về camera mới nhất đã lên sóng!
-                </div>
-            </div>
-        </article>
+        <div id="posts-feed">
+            <div class="loading-text">Đang tải bảng tin...</div>
+        </div>
     </div>
 
     <script>
+        const API_URL = "https://text2team-cam-api.hf.space";
+        const user = JSON.parse(localStorage.getItem('socialcam_user'));
+
+        if (!user) {
+            window.location.href = "../login/index.html";
+        }
+
+        // Initialize Icons
         lucide.createIcons();
+
+        // Search Logic
+        const searchInput = document.getElementById('user-search');
+        const searchResults = document.getElementById('search-results');
+
+        searchInput.addEventListener('input', async (e) => {
+            const query = e.target.value.trim();
+            if (query.length < 2) {
+                searchResults.style.display = 'none';
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_URL}/api/search?query=${query}`);
+                const data = await response.json();
+                
+                renderSearchResults(data);
+            } catch (err) {
+                console.error(err);
+            }
+        });
+
+        function renderSearchResults(users) {
+            if (users.length === 0) {
+                searchResults.innerHTML = '<div style="padding: 20px; text-align: center; color: #888;">Không tìm thấy người dùng</div>';
+            } else {
+                searchResults.innerHTML = users.map(u => `
+                    <div class="user-result">
+                        <div class="user-info">
+                            <img src="${API_URL}${u.avatar}" class="user-avatar">
+                            <span class="username">${u.username}</span>
+                        </div>
+                        <button class="add-btn" onclick="addFriend('${u.username}')">Kết bạn</button>
+                    </div>
+                `).join('');
+            }
+            searchResults.style.display = 'block';
+        }
+
+        async function addFriend(friendUsername) {
+            try {
+                const formData = new FormData();
+                formData.append('user_id', user.id);
+                formData.append('friend_username', friendUsername);
+
+                const response = await fetch(`${API_URL}/api/add_friend`, {
+                    method: 'POST',
+                    body: formData
+                });
+
+                if (response.ok) {
+                    alert(`Đã kết bạn với ${friendUsername}`);
+                    searchResults.style.display = 'none';
+                    searchInput.value = '';
+                    loadFeed(); // Refresh feed to see their posts
+                }
+            } catch (err) {
+                console.error(err);
+            }
+        }
+
+        // Feed Logic
+        async function loadFeed() {
+            try {
+                const response = await fetch(`${API_URL}/api/feed?user_id=${user.id}`);
+                const posts = await response.json();
+                
+                renderFeed(posts);
+            } catch (err) {
+                console.error(err);
+                document.getElementById('posts-feed').innerHTML = '<div class="loading-text">Lỗi khi tải bảng tin.</div>';
+            }
+        }
+
+        function renderFeed(posts) {
+            const feedContainer = document.getElementById('posts-feed');
+            if (posts.length === 0) {
+                feedContainer.innerHTML = '<div class="loading-text">Chưa có bài viết nào từ bạn bè. Hãy kết bạn để xem thêm!</div>';
+                return;
+            }
+
+            feedContainer.innerHTML = posts.map(post => `
+                <article class="post-card">
+                    <div class="post-header">
+                        <div class="user-info">
+                            <img class="user-avatar" src="${API_URL}${post.user_avatar}" alt="">
+                            <div>
+                                <p class="username">${post.username}</p>
+                                <p class="post-time">${formatTime(post.timestamp)}</p>
+                            </div>
+                        </div>
+                        <i data-lucide="more-horizontal" style="color: var(--muted); width: 20px;"></i>
+                    </div>
+                    <div class="post-image">
+                        <img src="${API_URL}${post.image_url}" alt="Post content" loading="lazy">
+                    </div>
+                    <div class="post-content">
+                        <div class="post-actions">
+                            <button class="action-btn"><i data-lucide="heart" style="width: 22px;"></i></button>
+                            <button class="action-btn"><i data-lucide="message-circle" style="width: 22px;"></i></button>
+                            <button class="action-btn"><i data-lucide="send" style="width: 22px;"></i></button>
+                        </div>
+                        <div class="post-text">
+                            <span>${post.username}</span> ${post.caption}
+                        </div>
+                    </div>
+                </article>
+            `).join('');
+            
+            lucide.createIcons();
+        }
+
+        function formatTime(timestamp) {
+            const now = Date.now() / 1000;
+            const diff = now - timestamp;
+            if (diff < 60) return 'Vừa xong';
+            if (diff < 3600) return `${Math.floor(diff/60)} phút trước`;
+            if (diff < 86400) return `${Math.floor(diff/3600)} giờ trước`;
+            return `${Math.floor(diff/86400)} ngày trước`;
+        }
+
+        // Close search when clicking outside
+        document.addEventListener('click', (e) => {
+            if (!e.target.closest('.search-container')) {
+                searchResults.style.display = 'none';
+            }
+        });
+
+        loadFeed();
     </script>
 </body>
 </html>

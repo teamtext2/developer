@@ -30,9 +30,9 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: flex-start; /* Changed from center to push content from top */
-            padding-top: 40px;
-            padding-bottom: 120px; /* Space for bottom navigation bar */
+            justify-content: center;
+            padding: 10px;
+            padding-bottom: 110px; /* Ensure space for nav bar */
             color: #fff;
         }
 
@@ -77,18 +77,17 @@
         /* Main Viewport Container */
         #viewport-wrapper {
             position: relative;
-            width: 90%;
-            max-width: 420px;
+            width: 92%;
+            max-width: 440px;
             aspect-ratio: 3 / 4;
             background: #111;
-            border-radius: 28px;
+            border-radius: 32px;
             overflow: hidden;
             box-shadow: 0 40px 100px rgba(0, 0, 0, 0.8), 
                         0 0 0 1px var(--ios-border);
             display: flex;
             align-items: center;
             justify-content: center;
-            margin-bottom: auto; /* Push the UI below it to the bottom */
         }
 
         video {
@@ -105,12 +104,17 @@
             left: 0;
             width: 100%;
             height: 100%;
-            pointer-events: none;
             display: flex;
             flex-direction: column;
             justify-content: space-between;
             padding: 20px;
             z-index: 5;
+            background: linear-gradient(to bottom, rgba(0,0,0,0.3) 0%, transparent 15%, transparent 75%, rgba(0,0,0,0.4) 100%);
+            pointer-events: none;
+        }
+
+        .viewport-overlay > * {
+            pointer-events: auto;
         }
 
         .top-info {
@@ -130,15 +134,19 @@
             border: 0.5px solid rgba(255, 255, 255, 0.2);
         }
 
-        /* Camera Controls */
-        #camera-ui {
+        .bottom-controls {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .camera-actions {
             width: 100%;
-            max-width: 450px;
-            padding: 0 40px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            z-index: 10;
+            padding: 0 10px;
         }
 
         .shutter-container {
@@ -149,10 +157,10 @@
         }
 
         .shutter-outer {
-            width: 80px;
-            height: 80px;
+            width: 72px;
+            height: 72px;
             border-radius: 50%;
-            background: rgba(255, 255, 255, 0.1);
+            background: rgba(255, 255, 255, 0.15);
             backdrop-filter: blur(10px);
             display: flex;
             align-items: center;
@@ -160,7 +168,7 @@
             cursor: pointer;
             transition: all 0.4s cubic-bezier(0.19, 1, 0.22, 1);
             border: 4px solid #fff;
-            padding: 4px;
+            padding: 3px;
         }
 
         .shutter-inner {
@@ -181,17 +189,17 @@
         }
 
         .side-btn {
-            width: 50px;
-            height: 50px;
+            width: 44px;
+            height: 44px;
             border-radius: 50%;
-            background: var(--ios-glass);
-            backdrop-filter: var(--ios-blur);
-            -webkit-backdrop-filter: var(--ios-blur);
+            background: rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
             display: flex;
             align-items: center;
             justify-content: center;
             color: #fff;
-            border: 1px solid var(--ios-border);
+            border: 1px solid rgba(255, 255, 255, 0.1);
             transition: all 0.3s cubic-bezier(0.19, 1, 0.22, 1);
             cursor: pointer;
         }
@@ -202,37 +210,11 @@
         }
 
         .side-btn i {
-            width: 22px;
-            height: 22px;
+            width: 20px;
+            height: 20px;
         }
 
-        /* Mode Selector */
-        .mode-selector {
-            display: flex;
-            gap: 20px;
-            margin-bottom: 25px;
-            font-size: 13px;
-            font-weight: 600;
-            letter-spacing: 0.5px;
-            color: rgba(255, 255, 255, 0.5);
-        }
 
-        .mode-item.active {
-            color: #fff;
-            position: relative;
-        }
-
-        .mode-item.active::after {
-            content: '';
-            position: absolute;
-            bottom: -6px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 4px;
-            height: 4px;
-            background: #fff;
-            border-radius: 50%;
-        }
 
         /* Flash & Status */
         #flash {
@@ -277,15 +259,109 @@
             to { transform: translateY(0) scale(1); opacity: 1; }
         }
 
+        /* Review State UI */
+        .review-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #000;
+            z-index: 20;
+            display: none;
+            flex-direction: column;
+        }
+
+        #review-img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .review-ui {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            padding: 25px;
+            background: linear-gradient(to top, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0.4) 60%, transparent 100%);
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            align-items: center;
+        }
+
+        #caption-input {
+            width: 100%;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 16px;
+            padding: 12px 16px;
+            color: #fff;
+            font-family: inherit;
+            font-size: 14px;
+            resize: none;
+            outline: none;
+            transition: all 0.3s ease;
+        }
+
+        #caption-input:focus {
+            background: rgba(255, 255, 255, 0.15);
+            border-color: rgba(255, 255, 255, 0.4);
+        }
+
+        .post-btn {
+            background: #fff;
+            color: #000;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 25px;
+            font-weight: 700;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+        }
+
+        .post-btn:active {
+            transform: scale(0.95);
+        }
+
+        .post-btn i {
+            width: 16px;
+            height: 16px;
+        }
+
+        .cancel-review-btn {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            z-index: 30;
+        }
+
         /* Mobile specific adjustments */
         @media (max-height: 700px) {
             #viewport-wrapper {
-                width: 80%;
-                margin-bottom: 15px;
+                width: 85%;
             }
             .shutter-outer {
-                width: 70px;
-                height: 70px;
+                width: 64px;
+                height: 64px;
             }
         }
     </style>
@@ -312,36 +388,47 @@
                     <i data-lucide="info" style="width: 16px; height: 16px;"></i>
                 </div>
             </div>
-            <div style="flex: 1;"></div>
-            <div style="display: flex; justify-content: center; margin-bottom: 10px;">
-                <div style="background: rgba(0,0,0,0.4); backdrop-filter: blur(10px); padding: 5px 15px; border-radius: 20px; font-size: 11px;">
+            
+            <div style="flex: 1; display: flex; align-items: center; justify-content: center;">
+                <div style="background: rgba(0,0,0,0.3); backdrop-filter: blur(10px); padding: 5px 12px; border-radius: 20px; font-size: 11px; margin-top: auto; margin-bottom: 20px;">
                     1x
+                </div>
+            </div>
+
+            <div class="bottom-controls">
+                <div class="camera-actions">
+                    <div class="side-btn" onclick="toggleFlash()">
+                        <i data-lucide="zap" id="flash-icon"></i>
+                    </div>
+                    
+                    <div class="shutter-container">
+                        <div class="shutter-outer" id="shutter-btn">
+                            <div class="shutter-inner"></div>
+                        </div>
+                    </div>
+
+                    <div class="side-btn" onclick="switchCamera()">
+                        <i data-lucide="refresh-cw"></i>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Review Overlay -->
+            <div id="review-overlay" class="review-overlay">
+                <img id="review-img" src="" alt="Review">
+                <div class="cancel-review-btn" onclick="cancelReview()">
+                    <i data-lucide="x" style="width: 18px; height: 18px;"></i>
+                </div>
+                <div class="review-ui">
+                    <textarea id="caption-input" placeholder="Thêm mô tả cho ảnh..." rows="2"></textarea>
+                    <button class="post-btn" onclick="postPhoto()">
+                        <span>Đăng ngay</span>
+                        <i data-lucide="send"></i>
+                    </button>
                 </div>
             </div>
         </div>
         <canvas id="capture-canvas" style="display: none;"></canvas>
-    </div>
-
-    <div class="mode-selector">
-        <span class="mode-item">VIDEO</span>
-        <span class="mode-item active">ẢNH</span>
-        <span class="mode-item">CHÂN DUNG</span>
-    </div>
-
-    <div id="camera-ui">
-        <div class="side-btn" onclick="toggleFlash()">
-            <i data-lucide="zap" id="flash-icon"></i>
-        </div>
-        
-        <div class="shutter-container">
-            <div class="shutter-outer" id="shutter-btn">
-                <div class="shutter-inner"></div>
-            </div>
-        </div>
-
-        <div class="side-btn" onclick="switchCamera()">
-            <i data-lucide="refresh-cw"></i>
-        </div>
     </div>
 
     <script src="../js/db.js"></script>
@@ -375,15 +462,18 @@
             }
         }
 
+        const reviewOverlay = document.getElementById('review-overlay');
+        const reviewImg = document.getElementById('review-img');
+        const captionInput = document.getElementById('caption-input');
+        
+        let currentBlob = null;
+
         async function takePhoto() {
             // Flash effect
             flash.classList.remove('flash-active');
             void flash.offsetWidth; 
             flash.classList.add('flash-active');
 
-            // Set canvas size to match video resolution but maintain 3:4 crop if needed
-            // However, video is already object-fit: cover in a 3:4 container.
-            // To capture exactly what's shown:
             canvas.width = video.videoWidth;
             canvas.height = video.videoHeight;
             const context = canvas.getContext('2d');
@@ -396,16 +486,65 @@
             context.restore();
             
             canvas.toBlob(async (blob) => {
-                try {
-                    if (window.savePhoto) {
-                        await savePhoto(blob);
-                    }
-                    showStatus("Đã lưu ảnh thành công!");
-                } catch (err) {
-                    console.error("Lỗi lưu ảnh:", err);
-                    showStatus("Lỗi khi lưu ảnh.");
-                }
+                currentBlob = blob;
+                const url = URL.createObjectURL(blob);
+                reviewImg.src = url;
+                reviewOverlay.style.display = 'flex';
+                captionInput.value = '';
+                captionInput.focus();
             }, 'image/jpeg', 0.95);
+        }
+
+        function cancelReview() {
+            reviewOverlay.style.display = 'none';
+            if (reviewImg.src) {
+                URL.revokeObjectURL(reviewImg.src);
+                reviewImg.src = '';
+            }
+            currentBlob = null;
+        }
+
+        async function postPhoto() {
+            if (!currentBlob) return;
+            
+            const caption = captionInput.value.trim();
+            const user = JSON.parse(localStorage.getItem('socialcam_user'));
+            
+            if (!user) {
+                showStatus("Vui lòng đăng nhập để đăng ảnh.");
+                return;
+            }
+
+            try {
+                showStatus("Đang tải ảnh lên...");
+                
+                // 1. Save locally (optional, keep for offline)
+                if (window.savePhoto) {
+                    await savePhoto(currentBlob, caption);
+                }
+
+                // 2. Send to API
+                const formData = new FormData();
+                formData.append('user_id', user.id);
+                formData.append('caption', caption);
+                formData.append('image', currentBlob, 'capture.jpg');
+
+                const response = await fetch('https://text2team-cam-api.hf.space/api/posts', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                if (response.ok) {
+                    showStatus("Đã đăng ảnh thành công!");
+                    cancelReview();
+                } else {
+                    const err = await response.json();
+                    throw new Error(err.detail || "Lỗi tải lên");
+                }
+            } catch (err) {
+                console.error("Lỗi đăng ảnh:", err);
+                showStatus("Lỗi khi đăng ảnh: " + err.message);
+            }
         }
 
         function showStatus(text) {
