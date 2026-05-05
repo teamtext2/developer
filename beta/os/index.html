@@ -965,7 +965,7 @@
 
         async function loadApps() {
             try {
-                const response = await fetch('https://text2.co/app.json');
+                const response = await fetch('/app.json');
                 const data = await response.json();
 
                 text2Apps = data.map(app => ({
@@ -981,37 +981,17 @@
                 console.error("Failed to fetch apps:", error);
                 // Fallback to basic apps if fetch fails
                 text2Apps = [
+                    { id: 'note', name: 'Note', url: 'https://text2.co/app/note/', icon: 'https://text2.co/app/note/apple-touch-icon.png' },
                     { id: 'translate', name: 'Translate', url: 'https://text2.co/app/translate/', icon: 'https://text2.co/app/translate/apple-touch-icon.png' },
                     { id: 'camera', name: 'Camera', url: 'https://text2.co/app/camera/', icon: 'https://text2.co/app/camera/apple-touch-icon.png' }
                 ];
-                function renderAppHub() {
-                    const grid = document.getElementById('appGrid');
-                    const fragment = document.createDocumentFragment();
-
-                    text2Apps.forEach(app => {
-                        const item = document.createElement('div');
-                        item.className = 'app-item';
-                        item.setAttribute('data-name', app.name.toLowerCase());
-                        item.setAttribute('onclick', `openApp('${app.id}')`);
-                        item.setAttribute('draggable', 'true');
-                        item.innerHTML = `
-                    <img src="${app.icon}" loading="lazy" alt="${app.name}">
-                    <span>${app.name}</span>
-                `;
-                        fragment.appendChild(item);
-                    });
-
-                    grid.innerHTML = '';
-                    grid.appendChild(fragment);
-
-                    // Re-initialize drag and drop for new items
-                    initDragAndDrop();
-                }
+                renderAppHub();
             }
         }
 
         function renderAppHub() {
             const grid = document.getElementById('appGrid');
+            if (!grid) return;
             const fragment = document.createDocumentFragment();
 
             text2Apps.forEach(app => {
