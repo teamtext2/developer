@@ -120,11 +120,34 @@ h1 {
     border: 1px solid var(--border);
     padding: 0.25rem 0.5rem;
     color: #666;
+    transition: var(--transition);
+}
+
+.badge-beta {
+    color: #ffbd2e;
+    border-color: rgba(255, 189, 46, 0.3);
+}
+
+.badge-prod {
+    color: #27c93f;
+    border-color: rgba(39, 201, 63, 0.3);
 }
 
 .app-card:hover .badge {
     color: var(--text);
     border-color: var(--text);
+}
+
+.app-card:hover .badge-beta {
+    color: #ffbd2e;
+    border-color: #ffbd2e;
+    box-shadow: 0 0 10px rgba(255, 189, 46, 0.2);
+}
+
+.app-card:hover .badge-prod {
+    color: #27c93f;
+    border-color: #27c93f;
+    box-shadow: 0 0 10px rgba(39, 201, 63, 0.2);
 }
 
 /* Loading & Empty States */

@@ -2,16 +2,223 @@
     {
         "t": "Chat AI Beta 1",
         "l": "https://dev.text2.co/beta/chat-ai-beta1/",
-        "i": "https://dev.text2.co/beta/chat-ai-beta1/apple-touch-icon.png"
+        "i": "https://dev.text2.co/beta/chat-ai-beta1/apple-touch-icon.png",
+        "tag": "beta"
     },
     {
         "t": "Chat AI Beta 2",
         "l": "https://dev.text2.co/beta/chat-ai-beta2/",
-        "i": "https://dev.text2.co/beta/chat-ai-beta2/apple-touch-icon.png"
+        "i": "https://dev.text2.co/beta/chat-ai-beta2/apple-touch-icon.png",
+        "tag": "beta"
     },
     {
         "t": "OS",
         "l": "https://dev.text2.co/beta/os/",
-        "i": "https://dev.text2.co/beta/os/apple-touch-icon.png"
+        "i": "https://dev.text2.co/beta/os/apple-touch-icon.png",
+        "tag": "beta"
+    },
+    {
+        "t": "Note",
+        "l": "https://text2.co/app/note/",
+        "i": "https://text2.co/app/note/apple-touch-icon.png",
+        "tag": "workspace"
+    },
+    {
+        "t": "Translate",
+        "l": "https://text2.co/app/translate/",
+        "i": "https://text2.co/app/translate/apple-touch-icon.png",
+        "tag": "extension"
+    },
+    {
+        "t": "QR",
+        "l": "https://text2.co/app/qr/",
+        "i": "https://text2.co/app/qr/apple-touch-icon.png",
+        "tag": "extension"
+    },
+    {
+        "t": "QR Scan",
+        "l": "https://text2.co/app/qr/scan/",
+        "i": "https://text2.co/app/qr/scan/apple-touch-icon.png",
+        "tag": "extension"
+    },
+    {
+        "t": "Grammar",
+        "l": "https://text2.co/app/grammar/",
+        "i": "https://text2.co/app/grammar/apple-touch-icon.png",
+        "tag": "ai"
+    },
+    {
+        "t": "Chat",
+        "l": "https://text2.co/app/chat/",
+        "i": "https://text2.co/app/chat/apple-touch-icon.png",
+        "tag": "ai"
+    },
+    {
+        "t": "Camera",
+        "l": "https://text2.co/app/camera/",
+        "i": "https://text2.co/app/camera/apple-touch-icon.png",
+        "tag": "images"
+    },
+    {
+        "t": "HTML",
+        "l": "https://text2.co/app/html/",
+        "i": "https://text2.co/app/html/apple-touch-icon.png",
+        "tag": "dev"
+    },
+    {
+        "t": "Calendar",
+        "l": "https://text2.co/app/calendar/",
+        "i": "https://text2.co/app/calendar/apple-touch-icon.png",
+        "tag": "workspace"
+    },
+    {
+        "t": "Image",
+        "l": "https://text2.co/app/img/",
+        "i": "https://text2.co/app/img/apple-touch-icon.png",
+        "tag": "images"
+    },
+    {
+        "t": "Love",
+        "l": "https://text2.co/app/love/",
+        "i": "https://text2.co/app/love/apple-touch-icon.png",
+        "tag": "love"
+    },
+    {
+        "t": "Luts",
+        "l": "https://text2.co/app/luts/",
+        "i": "https://text2.co/app/luts/apple-touch-icon.png",
+        "tag": "images"
+    },
+    {
+        "t": "Weather",
+        "l": "https://text2.co/app/weather/",
+        "i": "https://text2.co/app/weather/apple-touch-icon.png",
+        "tag": "extension"
+    },
+    {
+        "t": "Countday",
+        "l": "https://text2.co/app/countday/",
+        "i": "https://text2.co/app/countday/apple-touch-icon.png",
+        "tag": "extension"
+    },
+    {
+        "t": "Doc",
+        "l": "https://text2.co/app/doc/",
+        "i": "https://text2.co/app/doc/apple-touch-icon.png",
+        "tag": "workspace"
+    },
+    {
+        "t": "Random",
+        "l": "https://text2.co/app/random/",
+        "i": "https://text2.co/app/random/apple-touch-icon.png",
+        "tag": "workspace"
+    },
+    {
+        "t": "Compress Image",
+        "l": "https://text2.co/app/compress-img/",
+        "i": "https://text2.co/app/compress-img/apple-touch-icon.png",
+        "tag": "images"
+    },
+    {
+        "t": "Zip",
+        "l": "https://text2.co/app/zip/",
+        "i": "https://text2.co/app/zip/apple-touch-icon.png",
+        "tag": "workspace"
+    },
+    {
+        "t": "Generate Image",
+        "l": "https://text2.co/app/generate-img/",
+        "i": "https://text2.co/app/generate-img/apple-touch-icon.png",
+        "tag": "ai"
+    },
+    {
+        "t": "Magic Image",
+        "l": "https://text2.co/app/magic-img/",
+        "i": "https://text2.co/app/magic-img/apple-touch-icon.png",
+        "tag": "images"
+    },
+    {
+        "t": "Lovedays",
+        "l": "https://text2.co/app/lovedays/",
+        "i": "https://text2.co/app/lovedays/apple-touch-icon.png",
+        "tag": "love"
+    },
+    {
+        "t": "Mindmap",
+        "l": "https://text2.co/app/mindmap/",
+        "i": "https://text2.co/app/mindmap/apple-touch-icon.png",
+        "tag": "workspace"
+    },
+    {
+        "t": "Tuner",
+        "l": "https://text2.co/app/tuner/",
+        "i": "https://text2.co/app/tuner/apple-touch-icon.png",
+        "tag": "music"
+    },
+    {
+        "t": "Table",
+        "l": "https://text2.co/app/table/",
+        "i": "https://text2.co/app/table/apple-touch-icon.png",
+        "tag": "workspace"
+    },
+    {
+        "t": "Chess",
+        "l": "https://text2.co/game/chess/",
+        "i": "https://text2.co/game/chess/apple-touch-icon.png",
+        "tag": "game"
+    },
+    {
+        "t": "Caro",
+        "l": "https://text2.co/game/caro/",
+        "i": "https://text2.co/game/caro/apple-touch-icon.png",
+        "tag": "game"
+    },
+    {
+        "t": "Puzzle",
+        "l": "https://text2.co/game/puzzle/",
+        "i": "https://text2.co/game/puzzle/apple-touch-icon.png",
+        "tag": "game"
+    },
+    {
+        "t": "Rubik",
+        "l": "https://text2.co/game/rubik/",
+        "i": "https://text2.co/game/rubik/apple-touch-icon.png",
+        "tag": "game"
+    },
+    {
+        "t": "Snake",
+        "l": "https://text2.co/game/snake/",
+        "i": "https://text2.co/game/snake/apple-touch-icon.png",
+        "tag": "game"
+    },
+    {
+        "t": "Taochuky",
+        "l": "https://text2.co/nation/vi/taochuky/",
+        "i": "https://text2.co/nation/vi/taochuky/apple-touch-icon.png",
+        "tag": "vietnam extension"
+    },
+    {
+        "t": "THPT",
+        "l": "https://text2.co/nation/vi/thpt/",
+        "i": "https://text2.co/apple-touch-icon.png",
+        "tag": "vietnam extension"
+    },
+    {
+        "t": "Convert Image",
+        "l": "https://text2.co/app/convert-img/",
+        "i": "https://text2.co/app/convert-img/apple-touch-icon.png",
+        "tag": "images"
+    },
+    {
+        "t": "Canlua",
+        "l": "https://text2.co/app/canlua/",
+        "i": "https://text2.co/app/canlua/apple-touch-icon.png",
+        "tag": "vietnam extension"
+    },
+    {
+        "t": "Paint",
+        "l": "https://text2.co/app/paint/",
+        "i": "https://text2.co/app/paint/apple-touch-icon.png",
+        "tag": "workspace"
     }
 ]

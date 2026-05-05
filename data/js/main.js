@@ -25,8 +25,11 @@ async function fetchApps() {
             // Handle missing icons
             const iconUrl = app.i || 'https://via.placeholder.com/80?text=App';
 
+            const badgeText = (app.tag || 'BETA').toUpperCase();
+            const badgeClass = app.tag === 'beta' ? 'badge-beta' : 'badge-prod';
+
             card.innerHTML = `
-                        <span class="badge">BETA</span>
+                        <span class="badge ${badgeClass}">${badgeText}</span>
                         <img src="${iconUrl}" alt="${app.t}" class="app-icon" onerror="this.src='https://via.placeholder.com/80?text=Icon'">
                         <div class="app-title">${app.t}</div>
                     `;
